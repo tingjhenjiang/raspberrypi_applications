@@ -7,6 +7,7 @@ settings and applications for utilizing KODI
 * php(version)-curl, php(version)-xml.
 * Kodi
 * Tvheadend
+* youtube-dl
 
 ## Environment settings
 * Create home/pi/Documents/scripts/iptvmerge/youtube_api_key.txt and put your Youtube API key in it.
