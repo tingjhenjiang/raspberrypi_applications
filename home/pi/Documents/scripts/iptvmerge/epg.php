@@ -85,7 +85,7 @@ function get_xml_tv_from_xml($xmlepgs = array()) {
 
 include_once('epg_customized.php');
 $epgclass = new Epg_base;
-#dmpv(epg_rthk());exit;
+dmpv(epg_nhk_chinese());exit;
 #dmpv(get_custom_all_epgs());exit;
 
 include_once('hamichannels.php');
@@ -95,7 +95,7 @@ $hamiclass = new Hamivideo_playlist_epg;
 foreach (array(
 	get_xml_tv_from_xml(get_processed_epgs()),
 	$epgclass->get_xml_tv(get_custom_all_epgs()),
-	$hamiclass->get_xml_tv($hamiclass->get_all_epgs_in_days($hamiclass->hamivideochids, 2))
+	$hamiclass->get_xml_tv($hamiclass->get_all_epgs_in_days($hamiclass->hamivideochids, 7))
 	) as $targetDoc) {
 	foreach ( $targetDoc->childNodes as $node ) {
 		$newnode = $myownepgdoc->importNode($node, TRUE);

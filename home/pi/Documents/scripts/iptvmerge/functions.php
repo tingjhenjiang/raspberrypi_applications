@@ -46,7 +46,7 @@ class Epg_base {
 			'OC1'=>array('Olympic Channel (HD)','Olympic Channel (UHD)'),
 		)) {
 		$n_epgresults = count($epgresults);
-		$xmlDoc = new DOMDocument();
+		$xmlDoc = new DOMDocument('1.0', 'UTF-8');
 		$guide_channel_ids = array_column($epgresults,'chid');
 		$chtitles = array_column($epgresults,'chname');
 		$guide_channel_ids_to_channelnames = array_combine($guide_channel_ids,$chtitles);
