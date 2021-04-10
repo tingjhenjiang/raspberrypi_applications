@@ -9,7 +9,7 @@ $hami_ips = ["hamivideo.hinet.net",
 	"weblive-hamivideo.cdn.hinet.net",
 	"member.emome.net",
 	"member.hamicloud.net",
-	#"tjhome.crabdance.com",
+	"tjhome.crabdance.com",
 ];
 $hami_ips = array_map(function($ip) {
 	exec(sprintf("host %s | grep \"has address\" | sed 's/has address/-/g'", $ip), $output, $return_var);

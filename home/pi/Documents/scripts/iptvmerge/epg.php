@@ -85,7 +85,7 @@ function get_xml_tv_from_xml($xmlepgs = array()) {
 
 include_once('epg_customized.php');
 $epgclass = new Epg_base;
-dmpv(epg_nhk_chinese());exit;
+#dmpv(epg_nhk_chinese());exit;
 #dmpv(get_custom_all_epgs());exit;
 
 include_once('hamichannels.php');
@@ -114,4 +114,5 @@ $myownepgdoc = new SimpleXMLElement($myownepgdoc);
 $myownepgdoc = $myownepgdoc->asXML();
 
 echo file_put_contents(dirname(__FILE__).'/epg.xml', $myownepgdoc);
+echo "end writing epgs to ".dirname(__FILE__).'/epg.xml';
 ?>
