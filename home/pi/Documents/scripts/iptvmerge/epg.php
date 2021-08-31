@@ -85,16 +85,35 @@ function get_xml_tv_from_xml($xmlepgs = array()) {
 
 include_once('epg_customized.php');
 $epgclass = new Epg_base;
-#dmpv(epg_nhk_chinese());exit;
-#dmpv(get_custom_all_epgs());exit;
 
 include_once('hamichannels.php');
 $hamiclass = new Hamivideo_playlist_epg;
 
-#$hamiDoc = $hamiDoc->saveXML();
+//debug area
+/*
+foreach ( array(
+	get_xml_tv_from_xml(get_processed_epgs()),
+	$hamiclass->get_xml_tv($hamiclass->get_all_epgs_in_days($hamiclass->hamivideochids, 1))
+	) as $targetDoc) {
+	foreach ( $targetDoc->childNodes as $node ) {
+		$newnode = $myownepgdoc->importNode($node, TRUE);
+		$tvtag->appendChild( $newnode );
+	}
+};
+$myownepgdoc->appendChild($tvtag);
+$myownepgdoc->preserveWhiteSpace = FALSE;
+$myownepgdoc->formatOutput = TRUE;
+$myownepgdoc = $myownepgdoc->saveXML();
+$myownepgdoc = new SimpleXMLElement($myownepgdoc);
+$myownepgdoc = $myownepgdoc->asXML();
+
+dmpv( $myownepgdoc );
+exit;
+*/
+
 foreach (array(
 	get_xml_tv_from_xml(get_processed_epgs()),
-	$epgclass->get_xml_tv(get_custom_all_epgs()),
+	#$epgclass->get_xml_tv(get_custom_all_epgs()),
 	$hamiclass->get_xml_tv($hamiclass->get_all_epgs_in_days($hamiclass->hamivideochids, 7))
 	) as $targetDoc) {
 	foreach ( $targetDoc->childNodes as $node ) {
@@ -103,15 +122,12 @@ foreach (array(
 	}
 }
 
-#$hamiDoc->preserveWhiteSpace = FALSE;
-#$hamiDoc->formatOutput = TRUE;
-
 $myownepgdoc->appendChild($tvtag);
 $myownepgdoc->preserveWhiteSpace = FALSE;
 $myownepgdoc->formatOutput = TRUE;
 $myownepgdoc = $myownepgdoc->saveXML();
-$myownepgdoc = new SimpleXMLElement($myownepgdoc);
-$myownepgdoc = $myownepgdoc->asXML();
+/*$myownepgdoc = new SimpleXMLElement($myownepgdoc);
+$myownepgdoc = $myownepgdoc->asXML();*/
 
 echo file_put_contents(dirname(__FILE__).'/epg.xml', $myownepgdoc);
 echo "end writing epgs to ".dirname(__FILE__).'/epg.xml';

@@ -6,11 +6,14 @@ include_once("functions.php");
 $tw_yt_video_playlist_template = $playlist_template;
 $kodi_yt_addon_url_prefix = 'plugin://plugin.video.youtube/play/?video_id=';
 
-$self_path_in_apache = 'https://tjhome.crabdance.com:8844/iptvmerge/tw_yt_live_channels.php';
+$base_web_url_to_scripts = file_get_contents("base_web_url_to_scripts.txt"); #要在這個檔案裡面填入連結到這個script的http server基礎網頁連結例如 https://XXX.com/iptvmerge/
+$self_path_in_apache = $base_web_url_to_scripts.'tw_yt_live_channels.php';
 $self_path_in_cli = $_SERVER["PWD"].'/'.$_SERVER["PHP_SELF"];
 $youtube_api_key = file_get_contents("youtube_api_key.txt"); #要在這個檔案裡面填入youtube api key
 
-if (isset($output_ytm3u8_list) and $output_ytm3u8_list==TRUE) {
+//if (isset($output_ytm3u8_list) and $output_ytm3u8_list==TRUE) {
+function generate_tw_yt_live_videos_m3u8_infos() {
+	global $tw_yt_video_playlist_template;
 	$tw_live_channelids = array(
 		'公共電視(YT)'=>'UCXgIO9jJVsX5_2ideiSkfvA',
 		'公視台語台(YT)'=>'UCX6SRupi5lTDbIFJEOpReCQ',
@@ -39,36 +42,35 @@ if (isset($output_ytm3u8_list) and $output_ytm3u8_list==TRUE) {
 		#14
 	);
 	$tw_live_videos_matching_epgnames = array(
-		'公視'=>'/(公共電視|PTS Live)/', #公视
-		'公視2'=>'/(公視台語台|PTS Taigi)/', #公视2
-		'客家電視台'=>'/客家電視/', #客家电视台
-		'台視新聞台'=>'/台視新聞/', #台视新闻台
-		'民視新聞台'=>'/民視新聞/',#民视新闻台 6,
-		'TVBS新聞台'=>'/TVBS新聞/',#TVBS新闻台 7,
-		'東森新聞台'=>'/東森新聞/',#东森新闻台 8,
-		'東森財經新聞台'=>'/東森財經新聞/', #东森财经新闻台
-		'東森美洲電視'=>'/東森美洲/', #
-		'中視新聞'=>'/中視新聞/', #中视新闻
-		'中天新聞台'=>'/中天新聞/',#中天新闻台 11,
-		'三立新聞台'=>'/(三立新聞|三立LIVE新聞|SET Live NEWS|SET LIVE)/',#三立新闻台 12,
-		'三立財經新聞台'=>'/(三立iNews|iNEWS 最正新聞台|SET iNEWS)/', #三立新闻台
-		'大愛一台'=>'/大愛一/',#大爱一台 14
+		'公視'=>'/(公共電視|PTS Live)/',
+		'公視2'=>'/(公視台語台|PTS Taigi)/',
+		'客家電視台'=>'/客家電視/',
+		'台視新聞台'=>'/台視新聞/',
+		'民視新聞台'=>'/民視新聞/',
+		'TVBS新聞台'=>'/TVBS新聞/',
+		'東森新聞台'=>'/東森新聞/',
+		'東森財經新聞台'=>'/東森財經新聞/',
+		'東森美洲電視'=>'/東森美洲/',
+		'中視新聞'=>'/中視新聞/',
+		'中天新聞台'=>'/中天新聞/',
+		'三立新聞台'=>'/(三立新聞|三立LIVE新聞|SET Live NEWS|SET LIVE)/',
+		'三立財經新聞台'=>'/(三立iNews|iNEWS 最正新聞台|SET iNEWS)/',
+		'大愛一台'=>'/大愛一/',
 		'大愛二台'=>'/大愛二/',
 		'大愛海外'=>'/大愛海外/',
-		'東森幼幼台'=>'/YOYO TV/', #东森幼幼台
+		'東森幼幼台'=>'/YOYO TV/',
 		'華視綜藝'=>'/華視綜藝/',
 		'民視戲劇館'=>'/民視戲劇/',
 		'愛爾達綜合台'=>'/愛爾達綜合/',
 		'愛爾達戲劇台'=>'/愛爾達戲劇/',
 	);
-	#$tw_live_channelids = array_slice($tw_live_channelids, 0, 1, TRUE);
-	$len_tw_yt_prob_livechannels = count($tw_live_channelids);
 	$tw_livestreams_of_yt_channels = array_map(function($channelid) {
+		global $youtube_api_key;
 		return("https://www.googleapis.com/youtube/v3/search?part=snippet&eventType=live&maxResults=4&order=date&type=video&key=".$youtube_api_key."&channelId=".$channelid);
 	}, $tw_live_channelids);
-	#$tw_livestreams_of_yt_channels = array_map('getSslPage', $tw_livestreams_of_yt_channels);
 	$tw_livestreams_of_yt_channels = array_map(function($x) { global $getSslPage; sleep(0.5); $r=getSslPage($x); return($r); }, $tw_livestreams_of_yt_channels);
-	$tw_livestreams_of_yt_channels = array_map('json_decode', $tw_livestreams_of_yt_channels, array_fill(0, $len_tw_yt_prob_livechannels, TRUE));
+	$tw_livestreams_of_yt_channels = array_map('json_decode', $tw_livestreams_of_yt_channels, array_fill(0, count($tw_live_channelids), TRUE));
+
 	$tw_livestreams_of_yt_channels = array_map(function ($x,$key) {
 		global $kodi_yt_addon_url_prefix, $tw_live_videos_matching_epgnames, $self_path_in_apache, $self_path_in_cli;
 		if (array_key_exists('items', $x) and count($x['items'])>0) {
@@ -104,35 +106,39 @@ if (isset($output_ytm3u8_list) and $output_ytm3u8_list==TRUE) {
 	}, $tw_livestreams_of_yt_channels, array_keys($tw_live_channelids) );
 	$tw_livestreams_of_yt_channels = array_filter($tw_livestreams_of_yt_channels);
 	$tw_livestreams_of_yt_channels = array_reduce($tw_livestreams_of_yt_channels, 'array_merge_recursive', array());
-	
+
 	#generating m3u8 content
 	$tw_yt_live_videos_m3u8_infos_for_kodi = $tw_yt_live_videos_m3u8_infos_for_tvheadend = array();
 	foreach ($tw_livestreams_of_yt_channels as $key=>$videoarr) {
-		$tp = $tw_yt_video_playlist_template;
-		$tp = str_replace("PNG", $videoarr['thumbnails_large'], $tp);
+		$tp = str_replace("PNG", $videoarr['thumbnails_large'], $tw_yt_video_playlist_template);
 		$tp = str_replace("TVGID", $videoarr['videoid'], $tp);
 		$tp = str_replace("TVGNAME", $videoarr['match_chepg_name'], $tp);
 		$tp = str_replace("CHANNELNAME", $videoarr['title'], $tp);
-		#$tp_kodi = str_replace("M3U8", $videoarr['kodi_ytplugin_url'], $tp);
 		$tp_kodi = str_replace("M3U8", $videoarr['ytdlphp'], $tp);
 		$tp_tvheadend = str_replace("M3U8", $videoarr['ytdlphp'], $tp);
-		$tw_yt_live_videos_m3u8_infos_for_kodi[$key] = $tp_kodi;
-		$tw_yt_live_videos_m3u8_infos_for_tvheadend[$key] = $tp_tvheadend;
+		$tw_yt_live_videos_m3u8_infos_for_kodi[$videoarr['videoid']] = $tp_kodi;
+		$tw_yt_live_videos_m3u8_infos_for_tvheadend[$videoarr['videoid']] = $tp_tvheadend;
 	}
 	$tw_yt_live_videos_m3u8_infos_for_kodi = array_unique($tw_yt_live_videos_m3u8_infos_for_kodi);
 	$tw_yt_live_videos_m3u8_infos_for_kodi = trim(implode("\n", $tw_yt_live_videos_m3u8_infos_for_kodi));
 	$tw_yt_live_videos_m3u8_infos_for_tvheadend = array_unique($tw_yt_live_videos_m3u8_infos_for_tvheadend);
 	$tw_yt_live_videos_m3u8_infos_for_tvheadend = trim(implode("\n", $tw_yt_live_videos_m3u8_infos_for_tvheadend));
+	return array(
+		'channels_array'=>$tw_livestreams_of_yt_channels,
+		'kodi'=>$tw_yt_live_videos_m3u8_infos_for_kodi,
+		'tvheadend'=>$tw_yt_live_videos_m3u8_infos_for_tvheadend
+	);
+	
 }
 
-if ($_GET['video_id']) {
+if (isset($_GET['video_id']) && $_GET['video_id'] ) {
 
 	if ($_GET['mode']=='ytdlphp') {
 		$source_yt_url = "https://www.youtube.com/watch?v=".$_GET['video_id'];
 		$referer_yt_m3u8_command = "youtube-dl -f best -g ".$source_yt_url;
-		#$referer_yt_m3u8 = exec($referer_yt_m3u8_command, $execoutput);
 		$referer_yt_m3u8 = trim(shell_exec($referer_yt_m3u8_command));
-		#http://192.168.10.200/iptvmerge/tw_yt_live_channels.php?mode=ytdlphp&video_id=ED4QXd5xAco
+		#dmpv($referer_yt_m3u8);exit;
+		#$base_web_url_to_scripts/tw_yt_live_channels.php?mode=ytdlphp&video_id=JAzRXylm3M0
 		header("Referrer-Policy: no-referrer");
 		header("Location: ".$referer_yt_m3u8);
 		exit;
@@ -155,25 +161,6 @@ if ($_GET['video_id']) {
 	);
 	$tw_yt_live_videos_infos = 'https://www.youtube.com/get_video_info?&video_id='.$_GET['video_id'];
 
-	#$tw_yt_live_videos_infos = getSslPage($tw_yt_live_videos_infos, False, [], $sample_req_opts);
-	#$len_tw_yt_lives = 1;
-	#$tw_yt_live_videos_infos = getSslPages(array('https://www.whatismyip-address.com/?check'), array_fill(0, $len_tw_yt_lives, False), array_fill(0, $len_tw_yt_lives, []), array_fill(0, $len_tw_yt_lives, $sample_req_opts) );
-	#dumpv(file_get_contents("https://www.youtube.com/get_video_info?&video_id=ED4QXd5xAco"));
-	#dumpv(file_get_contents("https://www.youtube.com/embed/live_stream?channel=UCXgIO9jJVsX5_2ideiSkfvA"));
-	#dumpv(file_get_contents("https://www.youtube.com/get_video_info?html5=1&video_id=ED4QXd5xAco&cpn=Or9jovb023Zl0aiV&eurl&el=embedded&hl=zh_TW&sts=18350&lact=2&c=WEB_EMBEDDED_PLAYER&cver=20200327&cplayer=UNIPLAYER&cbr=Chrome&cbrver=80.0.3987.149&cos=Windows&cosver=10.0&width=630&height=698&authuser=0&ei=E5uCXu70Ls38qQHbtL5I&iframe=1&embed_config=%7B%7D"));
-	#dumpv($tw_yt_live_videos);
-	#dumpv($tw_yt_live_videos_infos);
-		#https://www.youtube.com/embed/live_stream?channel=UCXgIO9jJVsX5_2ideiSkfvA
-	#exit;
-	#$tw_yt_live_videos_infos = yt_get_video_info($tw_yt_live_videos_infos);
-	#$tw_yt_live_videos_streamingurl = recursive_search_array($tw_yt_live_videos_infos, '/m3u8/', 'v');
-	#$tw_yt_live_videos_streamingurl = $tw_yt_live_videos_streamingurl[0];
-	#$tw_live_videos_description = recursive_search_array($tw_yt_live_videos_infos, '/(^shortDescription$)/', 'k');
-	#$tw_live_videos_description = flatten($tw_live_videos_description);
-	#$tw_live_videos_description = $tw_live_videos_description[0];
-	#dumpv($tw_yt_live_videos_streamingurl);
-	#dumpv($tw_live_videos_description);
-	#dumpv($tw_yt_live_videos_infos);
 	exit;
 	#http://localhost:62555/?
 	if (!empty($tw_yt_live_videos_streamingurl) and !is_null($tw_yt_live_videos_streamingurl)) {

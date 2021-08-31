@@ -63,10 +63,11 @@ $streams = ret_streams_for_a_list([
 
 $kodi_streams = ret_streams_for_a_list(["http://i.mjh.nz/nzau/kodi-tv.m3u8",]);
 $tvheadend_streams = ret_streams_for_a_list(["http://i.mjh.nz/nzau/tvh-tv.m3u8",]);
+$tw_yt_live_videos_m3u8_infos = generate_tw_yt_live_videos_m3u8_infos();
 
 $m3u_firstline = "#EXTM3U\n";
 #string type data must be included in an array first(array_merge targets at array)
-$final_m3u = array_merge([$m3u_firstline, $hamivideo_playlist_for_kodi, $tw_yt_live_videos_m3u8_infos_for_kodi],
+$final_m3u = array_merge([$m3u_firstline, $hamivideo_playlist_for_kodi, $tw_yt_live_videos_m3u8_infos['kodi']],
 	#arrayInsertAfterKey($streams, "https://raw.githubusercontent.com/iptv-org/iptv/master/channels/kr.m3u", $kodi_streams)
 	$streams
 	);
@@ -78,7 +79,7 @@ $final_m3u = implode("\n", $final_m3u);
 echo file_put_contents(dirname(__FILE__).'/iptvstream.m3u', $final_m3u);
 
 
-$final_m3u = array_merge([$m3u_firstline, $hamivideo_playlist_for_tvheadend, $tw_yt_live_videos_m3u8_infos_for_tvheadend],
+$final_m3u = array_merge([$m3u_firstline, $hamivideo_playlist_for_tvheadend, $tw_yt_live_videos_m3u8_infos['tvheadend']],
 	#arrayInsertAfterKey($streams, "https://raw.githubusercontent.com/iptv-org/iptv/master/channels/kr.m3u", $tvheadend_streams)
 	$streams
 	);
