@@ -107,6 +107,9 @@ EOM;
 		$tp_epgresult = array_map2(function($chres, $chid, $chname) {
 			$chres['chid'] = $chid;
 			$chres['chname'] = $chname;
+			foreach ($chres as $k=>$v) {
+				$chres[$k] = htmlspecialchars($v);
+			}
 			return($chres);
 		},$tp_epgresult,$hamivideochid,$hamivideochname);
 		return($tp_epgresult);

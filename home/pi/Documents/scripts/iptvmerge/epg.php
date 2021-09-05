@@ -92,7 +92,7 @@ $hamiclass = new Hamivideo_playlist_epg;
 //debug area
 /*
 foreach ( array(
-	get_xml_tv_from_xml(get_processed_epgs()),
+	#get_xml_tv_from_xml(get_processed_epgs()),
 	$hamiclass->get_xml_tv($hamiclass->get_all_epgs_in_days($hamiclass->hamivideochids, 1))
 	) as $targetDoc) {
 	foreach ( $targetDoc->childNodes as $node ) {
@@ -106,7 +106,6 @@ $myownepgdoc->formatOutput = TRUE;
 $myownepgdoc = $myownepgdoc->saveXML();
 $myownepgdoc = new SimpleXMLElement($myownepgdoc);
 $myownepgdoc = $myownepgdoc->asXML();
-
 dmpv( $myownepgdoc );
 exit;
 */
