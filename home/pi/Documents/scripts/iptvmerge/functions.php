@@ -5,108 +5,108 @@ function dumpv($str) {
     var_dump($str);
     $buffer = ob_get_clean();
     print(htmlentities($buffer));
-	print("</pre>");
+    print("</pre>");
 }
 function dmpv($str) {
-	dumpv($str);
+    dumpv($str);
 }
 require(__DIR__.'/ZhConversion.php');
 #require('/ZhConversion.php');
 class ZhConversionfunc extends ZhConversion
 {
-	public static function zhconversion_tw($str) {
-		return strtr(strtr($str, self::$zh2TW), self::$zh2Hant);
-	}
+    public static function zhconversion_tw($str) {
+        return strtr(strtr($str, self::$zh2TW), self::$zh2Hant);
+    }
 }
 class Epg_base {
-	function array_key_rename($arr, $mapper = array(
-			'channel'=>'chid',
-			'title'=>'programName',
-			'start'=>'startTime',
-			'stop'=>'endTime',
-			'date'=>'startTime'
-		)) {
-		
-		foreach ($mapper as $oldkey=>$newkey) {
-			$arr[$newkey] = $arr[$oldkey];
-			unset($arr[$oldkey]);
-		}
-		return($arr);
-	}
-	function array_pad_key($arr, $keys=array()) {
-		foreach ($keys as $key) {
-			if (!in_array($key, array_keys($arr))) {
-				$arr[$key] = NULL;
-			}
-		}
-		return($arr);
-	}
-	function get_xml_tv($epgresults, $channel_additional_display_name = array(
-			'NHKChineseWorld'=>array('nhk华语','nhk華語','NHK華語','NHK Chinese Vision'),
-			'OC1'=>array('Olympic Channel (HD)','Olympic Channel (UHD)'),
-		)) {
-		$n_epgresults = count($epgresults);
-		$xmlDoc = new DOMDocument('1.0', 'UTF-8');
-		$guide_channel_ids = array_column($epgresults,'chid');
-		$chtitles = array_column($epgresults,'chname');
-		$guide_channel_ids_to_channelnames = array_combine($guide_channel_ids,$chtitles);
-		foreach ($guide_channel_ids_to_channelnames as $guide_channel_id=>$chtitle) {
-			$channel_element = $xmlDoc->createElement('channel');
-			$channel_element->setAttribute('id', $guide_channel_id);
-			$dispnameelement = $xmlDoc->createElement('display-name', $chtitle);
-			$channel_element->appendChild($dispnameelement);
-			if (strpos($chtitle, " ")!==FALSE) {
-				$chtitle_underlined = str_replace(" ", "_", $chtitle);
-				$dispname2element = $xmlDoc->createElement('display-name', $chtitle_underlined);
-				$channel_element->appendChild($dispname2element);
-			}
-			if ( in_array($guide_channel_id, array_keys($channel_additional_display_name ))) {
-				foreach ($channel_additional_display_name[$guide_channel_id] as $guide_channel_name) {
-					$channelelement_displayname = $myownepgdoc->createElement('display-name',$guide_channel_name);
-					$channelelement->appendChild($channelelement_displayname);
-				}
-			}
-			$xmlDoc->appendChild($channel_element);
-			foreach ($epgresults as $epgresultkey=>$epgresult) {
-				if ($epgresult['chid']!=$guide_channel_id) {
-					continue;
-				}
-				unset($epgresults[$epgresultkey]);
-				$progamelement = $xmlDoc->createElement('programme');
-				$progamelement->setAttribute('start', date("YmdHis +0800", $epgresult['startTime']));
-				$progamelement->setAttribute('stop', date("YmdHis +0800", $epgresult['endTime']));
-				$progamelement->setAttribute('channel', $guide_channel_id);
-				$titleelement = $xmlDoc->createElement('title', $epgresult['programName']);
-				$progamelement->appendChild($titleelement);
-				$descelement = $xmlDoc->createElement('desc', $epgresult['programdesc']);
-				$progamelement->appendChild($descelement);
-				$dateelement = $xmlDoc->createElement('date', date("Ymd", $epgresult['startTime']) );
-				$progamelement->appendChild($dateelement);
-				$xmlDoc->appendChild($progamelement);
-			}
+    function array_key_rename($arr, $mapper = array(
+            'channel'=>'chid',
+            'title'=>'programName',
+            'start'=>'startTime',
+            'stop'=>'endTime',
+            'date'=>'startTime'
+        )) {
+        
+        foreach ($mapper as $oldkey=>$newkey) {
+            $arr[$newkey] = $arr[$oldkey];
+            unset($arr[$oldkey]);
+        }
+        return($arr);
+    }
+    function array_pad_key($arr, $keys=array()) {
+        foreach ($keys as $key) {
+            if (!in_array($key, array_keys($arr))) {
+                $arr[$key] = NULL;
+            }
+        }
+        return($arr);
+    }
+    function get_xml_tv($epgresults, $channel_additional_display_name = array(
+            'NHKChineseWorld'=>array('nhk华语','nhk華語','NHK華語','NHK Chinese Vision'),
+            'OC1'=>array('Olympic Channel (HD)','Olympic Channel (UHD)'),
+        )) {
+        $n_epgresults = count($epgresults);
+        $xmlDoc = new DOMDocument('1.0', 'UTF-8');
+        $guide_channel_ids = array_column($epgresults,'chid');
+        $chtitles = array_column($epgresults,'chname');
+        $guide_channel_ids_to_channelnames = array_combine($guide_channel_ids,$chtitles);
+        foreach ($guide_channel_ids_to_channelnames as $guide_channel_id=>$chtitle) {
+            $channel_element = $xmlDoc->createElement('channel');
+            $channel_element->setAttribute('id', $guide_channel_id);
+            $dispnameelement = $xmlDoc->createElement('display-name', $chtitle);
+            $channel_element->appendChild($dispnameelement);
+            if (strpos($chtitle, " ")!==FALSE) {
+                $chtitle_underlined = str_replace(" ", "_", $chtitle);
+                $dispname2element = $xmlDoc->createElement('display-name', $chtitle_underlined);
+                $channel_element->appendChild($dispname2element);
+            }
+            if ( in_array($guide_channel_id, array_keys($channel_additional_display_name ))) {
+                foreach ($channel_additional_display_name[$guide_channel_id] as $guide_channel_name) {
+                    $channelelement_displayname = $myownepgdoc->createElement('display-name',$guide_channel_name);
+                    $channelelement->appendChild($channelelement_displayname);
+                }
+            }
+            $xmlDoc->appendChild($channel_element);
+            foreach ($epgresults as $epgresultkey=>$epgresult) {
+                if ($epgresult['chid']!=$guide_channel_id) {
+                    continue;
+                }
+                unset($epgresults[$epgresultkey]);
+                $progamelement = $xmlDoc->createElement('programme');
+                $progamelement->setAttribute('start', date("YmdHis +0800", $epgresult['startTime']));
+                $progamelement->setAttribute('stop', date("YmdHis +0800", $epgresult['endTime']));
+                $progamelement->setAttribute('channel', $guide_channel_id);
+                $titleelement = $xmlDoc->createElement('title', $epgresult['programName']);
+                $progamelement->appendChild($titleelement);
+                $descelement = $xmlDoc->createElement('desc', $epgresult['programdesc']);
+                $progamelement->appendChild($descelement);
+                $dateelement = $xmlDoc->createElement('date', date("Ymd", $epgresult['startTime']) );
+                $progamelement->appendChild($dateelement);
+                $xmlDoc->appendChild($progamelement);
+            }
 
-			/*
-			xmltvtemplate = 
-			  <programme start="20080715003000 -0600" stop="20080715010000 -0600" channel="I10436.labs.zap2it.com">
-				<title lang="en">NOW on PBS</title>
-				<desc lang="en">Jordan's Queen Rania has made job creation a priority to help curb the staggering unemployment rates among youths in the Middle East.</desc>
-				<date>20080711</date>
-				<category lang="en">Newsmagazine</category>
-				<category lang="en">Interview</category>
-				<category lang="en">Public affairs</category>
-				<category lang="en">Series</category>
-				<episode-num system="dd_progid">EP01006886.0028</episode-num>
-				<episode-num system="onscreen">427</episode-num>
-				<audio>
-				  <stereo>stereo</stereo>
-				</audio>
-				<previously-shown start="20080711000000" />
-				<subtitles type="teletext" />
-			  </programme>
-			*/
-		}
-		return($xmlDoc);
-	}
+            /*
+            xmltvtemplate = 
+              <programme start="20080715003000 -0600" stop="20080715010000 -0600" channel="I10436.labs.zap2it.com">
+                <title lang="en">NOW on PBS</title>
+                <desc lang="en">Jordan's Queen Rania has made job creation a priority to help curb the staggering unemployment rates among youths in the Middle East.</desc>
+                <date>20080711</date>
+                <category lang="en">Newsmagazine</category>
+                <category lang="en">Interview</category>
+                <category lang="en">Public affairs</category>
+                <category lang="en">Series</category>
+                <episode-num system="dd_progid">EP01006886.0028</episode-num>
+                <episode-num system="onscreen">427</episode-num>
+                <audio>
+                  <stereo>stereo</stereo>
+                </audio>
+                <previously-shown start="20080711000000" />
+                <subtitles type="teletext" />
+              </programme>
+            */
+        }
+        return($xmlDoc);
+    }
 }
 $zhconv = new ZhConversionfunc();
 function random_user_agent() {
@@ -1049,114 +1049,114 @@ function getSslPage($url, $post=FALSE, $fields=[], $additional_curl_opts=[]) {
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_REFERER, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-	curl_setopt($ch, CURLOPT_USERAGENT, random_user_agent());
-	if ($post==TRUE) {
-		curl_setopt($ch, CURLOPT_POST, TRUE);
-		$fields_string = http_build_query($fields);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_string);
-	}
-	if ($additional_curl_opts!=[]) {
-		curl_setopt_array($ch, $additional_curl_opts);
-	}
+    curl_setopt($ch, CURLOPT_USERAGENT, random_user_agent());
+    if ($post==TRUE) {
+        curl_setopt($ch, CURLOPT_POST, TRUE);
+        $fields_string = http_build_query($fields);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_string);
+    }
+    if ($additional_curl_opts!=[]) {
+        curl_setopt_array($ch, $additional_curl_opts);
+    }
     $result = curl_exec($ch);
     curl_close($ch);
     return $result;
 }
 function getSslPages($urls, $post=FALSE, $fields=[], $additional_curl_opts=[]) {
-	#$field is used by post request to send form data
-	$chs = array();
-	$arr_keys = array_keys($urls);
-	$post = (in_array($post, array(FALSE,TRUE))) ? array_combine($arr_keys, array_fill(0, count($urls), $post ) ) : $post;
-	$fields = ($fields==[]) ? array_combine($arr_keys, array_fill(0, count($urls), array() ) ) : $fields;
-	if (!is_array($fields)) {
-		$fields = array_fill(0, count($urls), $fields);
-	}
-	$additional_curl_opts = ($additional_curl_opts==[]) ? array_combine($arr_keys, array_fill(0, count($urls), array() )) : $additional_curl_opts;
-	if (!is_array($additional_curl_opts)) {
-		$additional_curl_opts = array_fill(0, count($urls), $additional_curl_opts);
-	}
-	$mh = curl_multi_init();
-	foreach ($urls as $key=>$url) {
-		$parsed_urls_args = parse_url($url);
-		$origin_referer = $parsed_urls_args['scheme'].'://'.$parsed_urls_args['host'];
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-		curl_setopt($ch, CURLOPT_HEADER, FALSE);
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-		curl_setopt($ch, CURLOPT_REFERER, $url);
-		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-		curl_setopt($ch, CURLOPT_USERAGENT, random_user_agent());
-		if (!empty($additional_curl_opts[$key]) and isset($additional_curl_opts[$key]) and !is_null($additional_curl_opts[$key]) ) {
-			curl_setopt_array($ch, $additional_curl_opts[$key]);
-			#curl_setopt($ch, CURLOPT_HTTPHEADER, $additional_req_headers);
-			#array('Content-type: text/plain', 'Content-length: 100')
-			#dumpv($additional_curl_opts[$key]);
-			#exit;
-		}
-		if ($post[$key]==TRUE) {
-			curl_setopt($ch, CURLOPT_POST, TRUE);
-			$fields_string = http_build_query($fields[$key]);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_string);
-		}
-		$chs[$key] = $ch;
-		curl_multi_add_handle($mh, $ch);
-	}
-	$active = null;
-	//execute the handles
-	do {
-		$mrc = curl_multi_exec($mh, $active);
-	} while ($mrc == CURLM_CALL_MULTI_PERFORM);
-	while ($active && $mrc == CURLM_OK) {
-		if (curl_multi_select($mh) != -1) {
-			do {
-				$mrc = curl_multi_exec($mh, $active);
-			} while ($mrc == CURLM_CALL_MULTI_PERFORM);
-		}
-	}
-	/* This is the relevant bit */
-	// iterate through the handles and get your content
-	$htmls = $curlinfos = array();
-	foreach ($chs as $key=>$ch) {
-		$htmls[$key] = curl_multi_getcontent($ch); // get the content
-		$curlinfos[$key] = curl_getinfo($ch);
-		// do what you want with the HTML
-		curl_multi_remove_handle($mh, $ch); // remove the handle (assuming  you are done with it);
-	}
-	/* End of the relevant bit */
-	curl_multi_close($mh);
-	return array('html'=>$htmls,'info'=>$curlinfos);
+    #$field is used by post request to send form data
+    $chs = array();
+    $arr_keys = array_keys($urls);
+    $post = (in_array($post, array(FALSE,TRUE))) ? array_combine($arr_keys, array_fill(0, count($urls), $post ) ) : $post;
+    $fields = ($fields==[]) ? array_combine($arr_keys, array_fill(0, count($urls), array() ) ) : $fields;
+    if (!is_array($fields)) {
+        $fields = array_fill(0, count($urls), $fields);
+    }
+    $additional_curl_opts = ($additional_curl_opts==[]) ? array_combine($arr_keys, array_fill(0, count($urls), array() )) : $additional_curl_opts;
+    if (!is_array($additional_curl_opts)) {
+        $additional_curl_opts = array_fill(0, count($urls), $additional_curl_opts);
+    }
+    $mh = curl_multi_init();
+    foreach ($urls as $key=>$url) {
+        $parsed_urls_args = parse_url($url);
+        $origin_referer = $parsed_urls_args['scheme'].'://'.$parsed_urls_args['host'];
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($ch, CURLOPT_HEADER, FALSE);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_REFERER, $url);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($ch, CURLOPT_USERAGENT, random_user_agent());
+        if (!empty($additional_curl_opts[$key]) and isset($additional_curl_opts[$key]) and !is_null($additional_curl_opts[$key]) ) {
+            curl_setopt_array($ch, $additional_curl_opts[$key]);
+            #curl_setopt($ch, CURLOPT_HTTPHEADER, $additional_req_headers);
+            #array('Content-type: text/plain', 'Content-length: 100')
+            #dumpv($additional_curl_opts[$key]);
+            #exit;
+        }
+        if ($post[$key]==TRUE) {
+            curl_setopt($ch, CURLOPT_POST, TRUE);
+            $fields_string = http_build_query($fields[$key]);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_string);
+        }
+        $chs[$key] = $ch;
+        curl_multi_add_handle($mh, $ch);
+    }
+    $active = null;
+    //execute the handles
+    do {
+        $mrc = curl_multi_exec($mh, $active);
+    } while ($mrc == CURLM_CALL_MULTI_PERFORM);
+    while ($active && $mrc == CURLM_OK) {
+        if (curl_multi_select($mh) != -1) {
+            do {
+                $mrc = curl_multi_exec($mh, $active);
+            } while ($mrc == CURLM_CALL_MULTI_PERFORM);
+        }
+    }
+    /* This is the relevant bit */
+    // iterate through the handles and get your content
+    $htmls = $curlinfos = array();
+    foreach ($chs as $key=>$ch) {
+        $htmls[$key] = curl_multi_getcontent($ch); // get the content
+        $curlinfos[$key] = curl_getinfo($ch);
+        // do what you want with the HTML
+        curl_multi_remove_handle($mh, $ch); // remove the handle (assuming  you are done with it);
+    }
+    /* End of the relevant bit */
+    curl_multi_close($mh);
+    return array('html'=>$htmls,'info'=>$curlinfos);
 }
 
 function array_map2() { #enable input not being an array or different length
     $args = func_get_args();
     $callback = array_shift($args);
-	$args = array_map(function ($x) {
-		return( (is_array($x)) ? $x : array($x) );
-	},$args);
-	$maxlength_of_args = max(array_map('count', $args));
-	foreach ($args as $key=>$v) {
-		$arglen = count($v);
-		if ($arglen<$maxlength_of_args) {
-			$t = $v[0];
-			$v = array_pad($v, $maxlength_of_args, $t);
-		}
-		$args[$key] = $v;
-	}
+    $args = array_map(function ($x) {
+        return( (is_array($x)) ? $x : array($x) );
+    },$args);
+    $maxlength_of_args = max(array_map('count', $args));
+    foreach ($args as $key=>$v) {
+        $arglen = count($v);
+        if ($arglen<$maxlength_of_args) {
+            $t = $v[0];
+            $v = array_pad($v, $maxlength_of_args, $t);
+        }
+        $args[$key] = $v;
+    }
     array_unshift($args,$callback);
     return call_user_func_array("array_map",$args);
 }
 function yt_get_video_info($videorawinfo) {
-	if ($videorawinfo=="") {
-		return $videorawinfo;
-	} else {
-		parse_str($videorawinfo, $output);
-		$output["player_response"] = json_decode($output["player_response"], True);
-		return $output;
-	}
+    if ($videorawinfo=="") {
+        return $videorawinfo;
+    } else {
+        parse_str($videorawinfo, $output);
+        $output["player_response"] = json_decode($output["player_response"], True);
+        return $output;
+    }
 }
 function yt_get_hlsplaylist_from_info($ret_data_by_videoinfo) {
-	return($ret_data_by_videoinfo["player_response"]->streamingData->hlsManifestUrl);
+    return($ret_data_by_videoinfo["player_response"]->streamingData->hlsManifestUrl);
 }
 function flatten(array $array) {
     $return = array();
@@ -1165,39 +1165,39 @@ function flatten(array $array) {
 }
 function endc( $array ) { return end( $array ); }
 function recursive_search_array($arr, $pattern, $mode='v') {
-	$finalmatches = array();
-	if (is_array($arr)) {
-		foreach ($arr as $k=>$v) {
-			if ($mode=='k') {
-				$pregres = preg_match($pattern, $k, $matches);
-				#echo "look in key=$k and pattern is $pattern and match result is $pregres <br />\n";
-				if ($pregres===1) {
-					if (is_array($v)) {
-						$finalmatches = array_merge($finalmatches, flatten($v));
-					} else {
-						$finalmatches[] = $v;
-					}
-				} else {
-					$finalmatches[] = False;
-				}
-			}
-			$finalmatches = array_merge($finalmatches, recursive_search_array($v, $pattern, $mode));
-		}
-	} else {
-		if ($mode!='k') {
-			#echo "look in $arr and pattern is $pattern <br />\n";
-			$pregres = preg_match($pattern, $arr, $matches);
-			if ($pregres===1) {
-				$finalmatches[] = $arr;
-			} else {
-				$finalmatches[] = False;
-			}
-		}
-	}
-	$finalmatches = flatten($finalmatches);
-	$finalmatches = array_unique(array_filter($finalmatches, 'strlen' ));
-	$finalmatches = array_filter($finalmatches, function ($x) {return(!empty($x) and $x!==array());} );
-	return($finalmatches);
+    $finalmatches = array();
+    if (is_array($arr)) {
+        foreach ($arr as $k=>$v) {
+            if ($mode=='k') {
+                $pregres = preg_match($pattern, $k, $matches);
+                #echo "look in key=$k and pattern is $pattern and match result is $pregres <br />\n";
+                if ($pregres===1) {
+                    if (is_array($v)) {
+                        $finalmatches = array_merge($finalmatches, flatten($v));
+                    } else {
+                        $finalmatches[] = $v;
+                    }
+                } else {
+                    $finalmatches[] = False;
+                }
+            }
+            $finalmatches = array_merge($finalmatches, recursive_search_array($v, $pattern, $mode));
+        }
+    } else {
+        if ($mode!='k') {
+            #echo "look in $arr and pattern is $pattern <br />\n";
+            $pregres = preg_match($pattern, $arr, $matches);
+            if ($pregres===1) {
+                $finalmatches[] = $arr;
+            } else {
+                $finalmatches[] = False;
+            }
+        }
+    }
+    $finalmatches = flatten($finalmatches);
+    $finalmatches = array_unique(array_filter($finalmatches, 'strlen' ));
+    $finalmatches = array_filter($finalmatches, function ($x) {return(!empty($x) and $x!==array());} );
+    return($finalmatches);
 }
 function arrayInsertAfterKey($array, $afterKey, $insertarray){
     $pos   = array_search($afterKey, array_keys($array));
@@ -1208,66 +1208,66 @@ function arrayInsertAfterKey($array, $afterKey, $insertarray){
     );
 } 
 function replace_tvgnameinfo($sentence) {
-	$match_chname_tvgname_arr = array(
-		'三立新聞台'=>'/(三立新聞|SET News)/',
-		'民視新聞台'=>'/(FTV News|民视新聞|民視新聞)/',
-		"TVBS新聞台"=>'/TVBS News/',
-		"大愛二台"=>'/Da Ai 2/',
-		"GoodTV"=>'/GOOD TV CH1 綜合台/',
-		"GoodTV2"=>'/GOOD TV CH2 真理台/',
-		"新唐人"=>'/NTD TV/',
-		"BabyFirst"=>'/BabyFirst臺灣/',
-		"信吉電視台"=>'/信吉電視/',
-		"原住民頻道"=>'/原住民族電視台/',
-		"唯心電視"=>'/唯心電視台/',
-		"靖天卡通台"=>'/靖天卡通/',
-		"靖天國際台"=>'/靖天國際/',
-		"靖天戲劇台"=>'/靖天戲劇/',
-		"靖天日本台"=>'/靖天日本/',
-		"靖天歡樂台"=>'/靖天歡樂/',
-		"靖天育樂台"=>'/靖天育樂/',
-		"靖天資訊台"=>'/靖天資訊/',
-		"靖天電影台"=>'/靖天電影/',
-		"靖洋戲劇台"=>'/靖洋戲劇/',
-		"博斯魅力網"=>'/博斯魅力/',
-		"靖洋卡通台"=>'/靖洋卡通/',
-		"鳳凰香港"=>'/鳳凰香港高清/',
-		"鳳凰資訊"=>'/(鳳凰資訊HD|鳳凰資訊HD1)/',
-		"ArirangTV"=>'/(Arirang HD|Arirang)/',
-		"NHKWorld"=>'/(NHK World Japan|NHK World Japan 1m|NHK World Japan 1mb|NHK World Japan 200k|NHK World Japan 200kb|NHK World Japan 600k|NHK World Japan 600kb|NHK World Japan live)/',
-	);
-	$match_chid_urlkw_arr = array(
-		"Nat_Geo_People_asia_time_adj_for_tvanywhere"=>"/livecdnh1.tvanywhere.ae\/hls\/nat_geo_people\//",
-		"NationalGeographic_asia_time_adj_for_tvanywhere"=>"/livecdnh1.tvanywhere.ae\/hls\/nat_geo\//",
-		"OC1"=>"/ott-live.olympicchannel.com\/out\/u\/(OC1_1.m3u8|OC1_2.m3u8|OC1_3.m3u8)/",
-		"Channel 8"=>"/d34e90s3s13i7n.cloudfront.net\/hls\/ch8ctv\/master02.m3u8/",
-	);
-	$match_tvgname_url_arr = array(
-		"Olympic Channel 1"=>"/ott-live.olympicchannel.com\/out\/u\/(OC1_1.m3u8|OC1_2.m3u8|OC1_3.m3u8)/",
-	);
-	$tvgname_match_check = preg_match("/tvg-id=\"([\w\s]*)\".+tvg-name=\"([\w\s]*)\".+\"{1},{1}(.+)[\r\n]*(.+)/", $sentence, $tvgnamematches);
-	if ($tvgname_match_check==1) {
-		$tvgnamematches[3] = trim($tvgnamematches[3]);
-		foreach ($match_chid_urlkw_arr as $match_chid=>$match_urlkw) {
-			if (preg_match($match_urlkw, $tvgnamematches[4])==1) {
-				$sentence = str_replace(sprintf("tvg-id=\"%s\"",$tvgnamematches[1]), sprintf("tvg-id=\"%s\"", $match_chid), $sentence);
-			}
-		}
-		foreach ($match_tvgname_url_arr as $match_tvgname=>$match_urlkw) {
-			if (preg_match($match_urlkw, $tvgnamematches[4])==1) {
-				$sentence = str_replace(sprintf("tvg-name=\"%s\"",$tvgnamematches[2]), sprintf("tvg-name=\"%s\"", $match_tvgname), $sentence);
-			}
-		}
-		if ($tvgnamematches[2]=="") { #原本的tvg-name是空白
-			foreach ($match_chname_tvgname_arr as $pairtvgname=>$pattern) {
-				$matchresult = preg_match($pattern, $tvgnamematches[3], $matches);
-				$insert_tvgname = ($matchresult==1) ? $pairtvgname : $tvgnamematches[3];
-				if ($matchresult==1) break;
-			}
-			$sentence = str_replace("tvg-name=\"\"", sprintf("tvg-name=\"%s\"",$insert_tvgname), $sentence);
-		}
-	}
-	return ($sentence);
+    $match_chname_tvgname_arr = array(
+        '三立新聞台'=>'/(三立新聞|SET News)/',
+        '民視新聞台'=>'/(FTV News|民视新聞|民視新聞)/',
+        "TVBS新聞台"=>'/TVBS News/',
+        "大愛二台"=>'/Da Ai 2/',
+        "GoodTV"=>'/GOOD TV CH1 綜合台/',
+        "GoodTV2"=>'/GOOD TV CH2 真理台/',
+        "新唐人"=>'/NTD TV/',
+        "BabyFirst"=>'/BabyFirst臺灣/',
+        "信吉電視台"=>'/信吉電視/',
+        "原住民頻道"=>'/原住民族電視台/',
+        "唯心電視"=>'/唯心電視台/',
+        "靖天卡通台"=>'/靖天卡通/',
+        "靖天國際台"=>'/靖天國際/',
+        "靖天戲劇台"=>'/靖天戲劇/',
+        "靖天日本台"=>'/靖天日本/',
+        "靖天歡樂台"=>'/靖天歡樂/',
+        "靖天育樂台"=>'/靖天育樂/',
+        "靖天資訊台"=>'/靖天資訊/',
+        "靖天電影台"=>'/靖天電影/',
+        "靖洋戲劇台"=>'/靖洋戲劇/',
+        "博斯魅力網"=>'/博斯魅力/',
+        "靖洋卡通台"=>'/靖洋卡通/',
+        "鳳凰香港"=>'/鳳凰香港高清/',
+        "鳳凰資訊"=>'/(鳳凰資訊HD|鳳凰資訊HD1)/',
+        "ArirangTV"=>'/(Arirang HD|Arirang)/',
+        "NHKWorld"=>'/(NHK World Japan|NHK World Japan 1m|NHK World Japan 1mb|NHK World Japan 200k|NHK World Japan 200kb|NHK World Japan 600k|NHK World Japan 600kb|NHK World Japan live)/',
+    );
+    $match_chid_urlkw_arr = array(
+        "Nat_Geo_People_asia_time_adj_for_tvanywhere"=>"/livecdnh1.tvanywhere.ae\/hls\/nat_geo_people\//",
+        "NationalGeographic_asia_time_adj_for_tvanywhere"=>"/livecdnh1.tvanywhere.ae\/hls\/nat_geo\//",
+        "OC1"=>"/ott-live.olympicchannel.com\/out\/u\/(OC1_1.m3u8|OC1_2.m3u8|OC1_3.m3u8)/",
+        "Channel 8"=>"/d34e90s3s13i7n.cloudfront.net\/hls\/ch8ctv\/master02.m3u8/",
+    );
+    $match_tvgname_url_arr = array(
+        "Olympic Channel 1"=>"/ott-live.olympicchannel.com\/out\/u\/(OC1_1.m3u8|OC1_2.m3u8|OC1_3.m3u8)/",
+    );
+    $tvgname_match_check = preg_match("/tvg-id=\"([\w\s]*)\".+tvg-name=\"([\w\s]*)\".+\"{1},{1}(.+)[\r\n]*(.+)/", $sentence, $tvgnamematches);
+    if ($tvgname_match_check==1) {
+        $tvgnamematches[3] = trim($tvgnamematches[3]);
+        foreach ($match_chid_urlkw_arr as $match_chid=>$match_urlkw) {
+            if (preg_match($match_urlkw, $tvgnamematches[4])==1) {
+                $sentence = str_replace(sprintf("tvg-id=\"%s\"",$tvgnamematches[1]), sprintf("tvg-id=\"%s\"", $match_chid), $sentence);
+            }
+        }
+        foreach ($match_tvgname_url_arr as $match_tvgname=>$match_urlkw) {
+            if (preg_match($match_urlkw, $tvgnamematches[4])==1) {
+                $sentence = str_replace(sprintf("tvg-name=\"%s\"",$tvgnamematches[2]), sprintf("tvg-name=\"%s\"", $match_tvgname), $sentence);
+            }
+        }
+        if ($tvgnamematches[2]=="") { #原本的tvg-name是空白
+            foreach ($match_chname_tvgname_arr as $pairtvgname=>$pattern) {
+                $matchresult = preg_match($pattern, $tvgnamematches[3], $matches);
+                $insert_tvgname = ($matchresult==1) ? $pairtvgname : $tvgnamematches[3];
+                if ($matchresult==1) break;
+            }
+            $sentence = str_replace("tvg-name=\"\"", sprintf("tvg-name=\"%s\"",$insert_tvgname), $sentence);
+        }
+    }
+    return ($sentence);
 }
 $playlist_template = <<<EOM
 #EXTINF:-1 tvg-id="TVGID" tvg-name="TVGNAME" tvg-language="Chinese" tvg-logo="PNG" tvg-country="TW" tvg-url="" group-title="",CHANNELNAME
