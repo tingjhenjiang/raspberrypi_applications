@@ -14,6 +14,7 @@ settings and applications for utilizing KODI
 * Modify home/pi/Documents/scripts/iptvmerge/tw_yt_live_channels.php `$self_path_in_apache` to match your httpd server settings.
 * Change permission of iptvffmpegsh.sh xmltv_to_socket.sh youtube-dl, making them executable.
 * Make youtube-dl system-wide executable (e.g., ln -s ./youtube-dl ./usr/sbin/youtube-dl).
+* Enable Apache http server support of SSL and proxypass for tvheadend via command: sudo a2enmod ssl; sudo a2enmod proxy; sudo a2enmod proxy_http; sudo a2enmod proxy_connect, and finally enable proxy site for tvheadend via sudo a2ensite.
 
 ## Run
 * Run `php stream.php` to update m3u8 playlist file(outputs stream.m3u8).
