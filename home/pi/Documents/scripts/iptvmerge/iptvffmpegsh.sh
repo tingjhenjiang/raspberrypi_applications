@@ -1,10 +1,14 @@
 #!/bin/bash
 
 hamilink=$1
-urlresult=$(php /home/pi/Documents/scripts/iptvmerge/hamichannels.php $hamilink)
-if [[ $hamilink == *"hamivideo"* ]]; then
-  ishamilink = "yes"
-fi
+# urlresult=$(php /home/pi/Documents/scripts/iptvmerge/hamichannels.php $hamilink)
+urlresult=$(/home/pi/Documents/Envs/kodi/bin/python /home/pi/Documents/kodi_addons/plugin.video.hamivideo/resources/lib/hamivideo/api.py --type hami --churl $hamilink)
+# if [[ $hamilink == *"hamivideo"* ]]; then
+#   ishamilink = "yes"
+# fi
+
+ishamilink=$(if [[ $hamilink == *"hamivideo"* ]]; then echo "yes"; else echo "no"; fi)
+
 #https://tvheadend.org/projects/tvheadend/wiki/Custom_MPEG-TS_Input
 #ffmpeg -i """$urlresult""" -f mpegts -tune zerolatency pipe:1
 #https://tvheadend.org/projects/tvheadend/wiki/Automatic_IPTV_Network
@@ -16,4 +20,4 @@ fi
 # -re -fflags +genpts
 # > /home/pi/Documents/scripts/iptvmerge/streaming.ts
 #"|User-Agent=Mozilla/5.0&referer=https://hamivideo.hinet.net&origin=https://hamivideo.hinet.net"
-ffmpeg -re -fflags +genpts -user-agent "Mozilla/5.0" -headers "origin: https://hamivideo.hinet.net" -headers "referer: https://hamivideo.hinet.net" -i """$urlresult""" -c copy -threads 4 -f mpegts -tune zerolatency pipe:1
+ffmpeg -loglevel warning -fflags +genpts -user_agent "Mozilla/5.0" -headers "origin: https://hamivideo.hinet.net" -headers "referer: https://hamivideo.hinet.net" -i """$urlresult""" -vcodec copy -acodec copy -threads 4 -f mpegts -tune zerolatency pipe:1

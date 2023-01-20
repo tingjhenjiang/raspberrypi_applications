@@ -3,4 +3,4 @@
 #outdated scan -v -a 0 -f 0 -d 0 -A 1 -c /usr/share/dvb/dvb-t/tw-All
 #dvbv5-scan -a 0 -C TW -d 0 -f 0 -o ~/Documents/scripts/testscan.txt -O CHANNEL /usr/share/dvb/dvb-t/tw-All -v
 #dvbv5-scan -a 0 -C TW -d 0 -f 0 -o ~/Documents/scripts/testscan.txt -O CHANNEL /usr/share/dvb/dvb-t/tw-All
-dvbv5-scan -a 0 -C TW -d 0 -f 0 -o ~/Documents/scripts/testscan.txt -O CHANNEL /usr/share/dvb/dvb-t/auto-Taiwan -v
+dvbv5-scan -a 0 -d 0 -f 0 -o /home/pi/Documents/scripts/testscan.txt -O CHANNEL /home/pi/Documents/scripts/mediaRelatedSettings/auto-Taiwan.config
