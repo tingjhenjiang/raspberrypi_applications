@@ -19,7 +19,7 @@ $hami_ips = array_reduce($hami_ips, 'array_merge', array());
 $hami_ips = array_map(function ($x) {return("route = ".trim(explode(" - ", $x)[1])."/255.255.255.255");}, $hami_ips);
 array_unshift($hami_ips, "route = 192.168.1.0/255.255.255.0");
 array_unshift($hami_ips, "route = 192.168.10.0/255.255.255.0");
-array_unshift($hami_ips, "explicit-ipv4 = 192.168.10.202");
+array_unshift($hami_ips, "explicit-ipv4 = 192.168.1.202");
 array_unshift($hami_ips, "interface = vpns+");
 $hami_ips = implode("\n", $hami_ips);
 file_put_contents("/home/pi/Documents/scripts/iptvmerge/hami", $hami_ips);

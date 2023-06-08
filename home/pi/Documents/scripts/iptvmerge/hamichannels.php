@@ -10,8 +10,8 @@ EOM;
 
 if ($argv[1] or $_GET['redirecthamilink']) {
     $hamilink = ($argv[1]) ? $argv[1] : $_GET['redirecthamilink'];
-    $hamivideo_playlist_for_tvheadend_pyscript = "/home/pi/Documents/kodi_addons/plugin.video.hamivideo/resources/lib/hamivideo/api.py";
-    $hamivideo_playlist_for_tvheadend_command = "/home/pi/Documents/Envs/kodi/bin/python ".$hamivideo_playlist_for_tvheadend_pyscript." --type hami --churl ".$hamilink;
+    $hamivideo_playlist_for_tvheadend_pyscript = "/home/tj/Documents/kodi_addons/plugin.video.hamivideo/resources/lib/hamivideo/api.py";
+    $hamivideo_playlist_for_tvheadend_command = "/home/tj/Documents/Envs/kodi/bin/python ".$hamivideo_playlist_for_tvheadend_pyscript." --type hami --churl ".$hamilink;
     $streamingurl = exec($hamivideo_playlist_for_tvheadend_command, $return_var);
     fwrite(STDOUT, $streamingurl);
     exit();
@@ -74,7 +74,7 @@ EOM;
             $tp = str_replace("TVGNAME", str_replace(" ", "_", $this->chnames[$key]), $tp);
             $tp = str_replace("CHANNELNAME", $this->chnames[$key], $tp);
             $hamivideo_playlist_for_kodi .= str_replace("M3U8", "plugin://plugin.video.hamivideo/play/hami/".urlencode($this->hamilinks[$key]), $tp)."\n";
-            $hamivideo_playlist_for_tvheadend .= str_replace("M3U8", "pipe:///home/pi/Documents/scripts/iptvmerge/iptvffmpegsh.sh ".$this->hamilinks[$key], $tp)."\n";
+            $hamivideo_playlist_for_tvheadend .= str_replace("M3U8", "pipe:///home/tj/Documents/scripts/iptvmerge/iptvffmpegsh.sh ".$this->hamilinks[$key], $tp)."\n";
         }
         $hamivideo_playlist_for_kodi = trim($hamivideo_playlist_for_kodi);
         $hamivideo_playlist_for_tvheadend = trim($hamivideo_playlist_for_tvheadend);
