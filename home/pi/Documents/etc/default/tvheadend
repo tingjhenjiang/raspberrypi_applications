@@ -3,7 +3,7 @@
 
 # systemd
 # See tvheadend --help for more - default "-u hts -g video"
-OPTIONS="-u tj -g users -6 --http_port 9983 --htsp_port 9982 -s --http_root /tv"
+OPTIONS="-u tj -g users -6 --http_port 9983 --htsp_port 9982 -s --http_root /tv -l /var/log/tvheadened.log"
 
 # sysvinit
 # 
@@ -58,4 +58,4 @@ TVH_DEBUG=1
 # TVH_ARGS
 #   add any other arguments
 #TVH_ARGS="-f --http_root /tv"
-TVH_ARGS=""
+TVH_ARGS="-l /var/log/tvheadened.log"
