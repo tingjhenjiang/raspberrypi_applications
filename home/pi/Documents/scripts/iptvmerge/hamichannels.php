@@ -74,7 +74,7 @@ EOM;
             $tp = str_replace("TVGNAME", str_replace(" ", "_", $this->chnames[$key]), $tp);
             $tp = str_replace("CHANNELNAME", $this->chnames[$key], $tp);
             $hamivideo_playlist_for_kodi .= str_replace("M3U8", "plugin://plugin.video.hamivideo/play/hami/".urlencode($this->hamilinks[$key]), $tp)."\n";
-            $hamivideo_playlist_for_tvheadend .= str_replace("M3U8", "pipe:///home/tj/Documents/scripts/iptvmerge/iptvffmpegsh.sh ".$this->hamilinks[$key], $tp)."\n";
+            $hamivideo_playlist_for_tvheadend .= str_replace("M3U8", "pipe:///home/tj/Documents/scripts/iptvmerge/iptvffmpegsh.sh ".$this->hamilinks[$key]." \"".$this->chnames[$key], $tp)."\"\n";
         }
         $hamivideo_playlist_for_kodi = trim($hamivideo_playlist_for_kodi);
         $hamivideo_playlist_for_tvheadend = trim($hamivideo_playlist_for_tvheadend);

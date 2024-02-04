@@ -25,7 +25,7 @@
 		"htsp"
 	],
 	"profile": [
-		"32bb171549093058c38dc92891823d84"
+		"d93b1f3be1209ad91f114fbe33c4e1e1"
 	],
 	"dvr": [
 		"basic",
@@ -36,7 +36,7 @@
 	],
 	"htsp_anonymize": false,
 	"dvr_config": [
-		"65e92fa31d3127c6c17a3026253f5337"
+		"f2f8ed6231a7b10b79f9d91717ad9831"
 	],
 	"webui": true,
 	"admin": false,

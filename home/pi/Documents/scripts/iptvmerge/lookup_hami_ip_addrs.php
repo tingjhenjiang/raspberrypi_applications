@@ -22,7 +22,7 @@ array_unshift($hami_ips, "route = 192.168.10.0/255.255.255.0");
 array_unshift($hami_ips, "explicit-ipv4 = 192.168.1.202");
 array_unshift($hami_ips, "interface = vpns+");
 $hami_ips = implode("\n", $hami_ips);
-file_put_contents("/home/pi/Documents/scripts/iptvmerge/hami", $hami_ips);
+file_put_contents("/home/tj/Documents/scripts/iptvmerge/hami", $hami_ips);
 file_put_contents("/etc/ocserv/config-per-user/hami", $hami_ips);
 dumpv($hami_ips);
 ?>

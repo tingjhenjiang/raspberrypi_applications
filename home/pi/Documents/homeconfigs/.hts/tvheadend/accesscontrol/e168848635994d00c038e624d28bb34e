@@ -25,6 +25,15 @@
 		"htsp"
 	],
 	"profile": [
+		"7895aeca17e48fc448a5fce46926710e",
+		"af49a96a4f58ae4959b1c09c4ab50764",
+		"53a6f57bbd396a4479f16b2b2e558226",
+		"4aabb396f2557da4a517f11bb7c72bcc",
+		"d93b1f3be1209ad91f114fbe33c4e1e1",
+		"32bb171549093058c38dc92891823d84",
+		"dd9d41c9930380e70fa69aa88c4957bd",
+		"bc4d5d41add17e5c12af72a04bae4f45",
+		"082a81a1583f79c042048a00d811f7b2"
 	],
 	"dvr": [
 		"basic",
@@ -35,6 +44,8 @@
 	],
 	"htsp_anonymize": false,
 	"dvr_config": [
+		"f2f8ed6231a7b10b79f9d91717ad9831",
+		"40257276168da124fe110e5d30b11832"
 	],
 	"webui": true,
 	"admin": true,

@@ -29,6 +29,10 @@ function get_processed_epgs() {
 #$n_epgsrcresults = count($epgsrcresults);
 #$epgsrcresults = array_map('mb_convert_encoding', $epgsrcresults, array_fill(0, $n_epgsrcresults, 'HTML-ENTITIES'), array_fill(0, $n_epgsrcresults, 'UTF-8') );
 
+function get_xml_tv_from_singlexml($epgkey, $epgsrcresult, $targetDoc) {
+
+}
+
 function get_xml_tv_from_xml($xmlepgs = array()) {
     global $zhconv;
     $url_china_epg_source = "http://epg.51zmt.top:8000/e.xml";
@@ -115,8 +119,8 @@ exit;
 */
 
 foreach (array(
-    get_xml_tv_from_xml(get_processed_epgs()),
-    #$epgclass->get_xml_tv(get_custom_all_epgs()),
+    // get_xml_tv_from_xml(get_processed_epgs()),
+    // $epgclass->get_xml_tv(get_custom_all_epgs()),
     $hamiclass->get_xml_tv($hamiclass->get_all_epgs_in_days($hamiclass->hamivideochids, 7))
     ) as $targetDoc) {
     foreach ( $targetDoc->childNodes as $node ) {

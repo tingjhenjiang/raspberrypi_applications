@@ -10,6 +10,10 @@ function dumpv($str) {
 function dmpv($str) {
     dumpv($str);
 }
+function get_datetime_and_timezone($time_stamp = 1706803200, $format = "YmdHis O", $localTimezone_str = "Asia/Taipei") {
+    $datetimeObject = ( new DateTime('now',new DateTimeZone($localTimezone_str)) )->setTimestamp($time_stamp)->format($format);
+    return($datetimeObject);
+}
 require(__DIR__.'/ZhConversion.php');
 #require('/ZhConversion.php');
 class ZhConversionfunc extends ZhConversion
@@ -73,14 +77,14 @@ class Epg_base {
                 }
                 unset($epgresults[$epgresultkey]);
                 $progamelement = $xmlDoc->createElement('programme');
-                $progamelement->setAttribute('start', date("YmdHis +0800", $epgresult['startTime']));
-                $progamelement->setAttribute('stop', date("YmdHis +0800", $epgresult['endTime']));
+                $progamelement->setAttribute('start', get_datetime_and_timezone($epgresult['startTime'])); // date("YmdHis +0800", )
+                $progamelement->setAttribute('stop', get_datetime_and_timezone($epgresult['endTime'])); // date("YmdHis +0800", )
                 $progamelement->setAttribute('channel', $guide_channel_id);
                 $titleelement = $xmlDoc->createElement('title', $epgresult['programName']);
                 $progamelement->appendChild($titleelement);
                 $descelement = $xmlDoc->createElement('desc', $epgresult['programdesc']);
                 $progamelement->appendChild($descelement);
-                $dateelement = $xmlDoc->createElement('date', date("Ymd", $epgresult['startTime']) );
+                $dateelement = $xmlDoc->createElement('date', get_datetime_and_timezone($epgresult['startTime'], "Ymd")  );
                 $progamelement->appendChild($dateelement);
                 $xmlDoc->appendChild($progamelement);
             }

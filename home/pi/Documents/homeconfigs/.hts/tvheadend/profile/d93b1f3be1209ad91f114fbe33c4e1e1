@@ -12,7 +12,7 @@
 	"class": "profile-mpegts-spawn",
 	"name": "transcode_lowestHD_bitrate",
 	"enabled": true,
-	"default": true,
+	"default": false,
 	"timeout": 5,
 	"priority": 1,
 	"fpriority": 0,

@@ -1,7 +1,7 @@
 {
 	"server_name": "Tvheadend",
 	"version": 24,
-	"full_version": "4.3-1994~gc7b713edb",
+	"full_version": "4.3-2155~gfe4df311d",
 	"language_ui": "eng_US",
 	"theme_ui": "blue",
 	"ui_quicktips": true,
@@ -38,7 +38,7 @@
 	"hdhomerun_ip": "",
 	"local_ip": "",
 	"local_port": 0,
-	"http_user_agent": "TVHeadend/4.3-1994~gc7b713edb",
+	"http_user_agent": "TVHeadend/4.3-2155~gfe4df311d",
 	"iptv_tpool": 2,
 	"dscp": -1,
 	"descrambler_buffer": 9000,
