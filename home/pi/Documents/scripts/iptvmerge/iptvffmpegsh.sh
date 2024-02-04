@@ -13,12 +13,12 @@ if [[ $urlresult == *"https"* ]] && [[ $? -eq 0 ]]; then
   # ishamilink=$(if [[ $hamilink == *"hamivideo"* ]]; then echo "yes"; else echo "no"; fi)
   # [[ $hamilink == *"hamivideo"* ]] && ishamilink="yes" || ishamilink="no"
   metadata_servicename="service_name=$servicename"
-  if [ $streaming_link == *"hamivideo"* ]; then
+  if [[ $streaming_link == *"hamivideo"* ]]; then
     metadata_service_provider="service_provider=Hamivideo"
-    ffmpeg -loglevel warning -fflags +genpts -user_agent "Mozilla/5.0" -headers "origin: https://hamivideo.hinet.net" -headers "referer: https://hamivideo.hinet.net" -i """$urlresult""" -vcodec copy -acodec copy -threads 4 -f hls -tune zerolatency -metadata "$metadata_servicename" -metadata "$metadata_service_provider" -analyzeduration 5G pipe:1
+    ffmpeg -loglevel warning -fflags +genpts -user_agent "Mozilla/5.0 Gecko/20100101 Firefox/67.0" -headers "origin: https://hamivideo.hinet.net" -headers "referer: https://hamivideo.hinet.net" -i """$urlresult""" -vcodec copy -acodec copy -threads 4 -f hls -tune zerolatency -metadata "$metadata_servicename" -metadata "$metadata_service_provider" -analyzeduration 5G pipe:1
   else
     metadata_service_provider="service_provider=Other Provider"
-    ffmpeg -loglevel warning -fflags +genpts -user_agent "Mozilla/5.0" -i """$urlresult""" -vcodec copy -acodec copy -threads 4 -f hls -tune zerolatency -metadata "$metadata_servicename" -metadata "$metadata_service_provider" -analyzeduration 5G pipe:1
+    ffmpeg -loglevel warning -fflags +genpts -user_agent "Mozilla/5.0 Gecko/20100101 Firefox/67.0" -i """$urlresult""" -vcodec copy -acodec copy -threads 4 -f hls -tune zerolatency -metadata "$metadata_servicename" -metadata "$metadata_service_provider" -analyzeduration 5G pipe:1
   fi
 else
   echo "Command Failed"
