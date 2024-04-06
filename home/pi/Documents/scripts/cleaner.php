@@ -95,7 +95,8 @@ if (!empty($_POST)) {
         #controls a { text-decoration: underline; cursor: pointer; padding-right:10px; }
         #pad { float: right; }
         #pad table { overflow-x:auto; }
-        #pad td { font-size: 100px; text-align:center; font-weight: bold; padding:20px; }
+        #pad td.singlechar { font-size: 100px; text-align:center; font-weight: bold; padding:20px; }
+        #pad td.multiplechar { font-size: 30px; text-align:center; font-weight: bold; padding:20px; }
         .active { color:red; }
     </style>
     <script type="text/javascript">
@@ -112,16 +113,16 @@ if (!empty($_POST)) {
         <table>
             <caption>Kodi Pad User <input id="kodi_auth_user" size="5" type="user" /> PW <input id="kodi_auth_pass" size="5" type="password" /> Stream URL <input id="kodi_input_text" size="15" type="text" /></caption>
             <tr>
-                <td></td><td><a id="Application.Quit">Q</a></td><td><a id="System.Reboot">RB</a></td><td></td>
+                <td></td><td class="singlechar"><a id="Application.Quit">Q</a></td><td class="singlechar"><a id="System.Reboot">RB</a></td><td></td>
             </tr>
             <tr>
-                <td><a id="Input.ButtonEvent">BE</a></td><td><a id="Input.ContextMenu">M</a></td><td><a id="Input.Up">↑</a></td><td><a id="Input.SendText">T</a></td>
+                <td class="multiplechar"><a id="Input.ButtonEvent">BEvent</a></td><td class="multiplechar"><a id="Input.ContextMenu">ContxM</a></td><td class="singlechar"><a id="Input.Up">↑</a></td><td class="singlechar"><a id="Input.SendText">T</a></td>
             </tr>
             <tr>
-                <td><a id="Input.YT">YT</a></td><td><a id="Input.Left">←</a></td><td><a id="Input.Select">█</a></td><td><a id="Input.Right">→</a></td>
+                <td class="singlechar"><a id="Input.YT">YT</a></td><td class="singlechar"><a id="Input.Left">←</a></td><td class="singlechar"><a id="Input.Select">█</a></td><td class="singlechar"><a id="Input.Right">→</a></td>
             </tr>
             <tr>
-                <td><a id="Input.ShowOSD">O</a></td><td><a id="Input.Back">↙</a></td><td><a id="Input.Down">↓</a></td><td><a id="Input.Info">Ⅰ</a></td>
+                <td class="singlechar"><a id="Input.ShowOSD">O</a></td><td class="singlechar"><a id="Input.Back">↙</a></td><td class="singlechar"><a id="Input.Down">↓</a></td><td class="singlechar"><a id="Input.Info">Ⅰ</a></td>
             </tr>
         </table>
         <script type="text/javascript">
@@ -160,14 +161,16 @@ if (!empty($_POST)) {
                     }
                 })
             }
-            $( "#pad" ).find("a[id]").on("mousedown touchstart", function(event) {
+            $( "#pad" ).find("a[id]").filter( function() {
+                return this.id.match(/^((?!(Up|Left|Right|Down)).)*$/);;
+            }).on("mousedown touchstart", function(event) {
                 sendreqtokodi(this.id,  [$("#kodi_input_text").val()]  );
                 $(this).addClass('active');
             }).bind('mouseup mouseleave touchend mouseleave onmouseout', function(event) {
                 $(this).removeClass('active');
             });
             $( "#pad" ).find("a[id]").filter( function() {
-                return this.id.match(/(Up|Left|Right|Down)/);
+                return this.id.match(/(Up|Left|Right|Down)/);;
             }).on( "mousedown touchstart", function(event) {
                 mousedownLoopBreak = false;
                 $(this).addClass('active');
@@ -188,8 +191,8 @@ if (!empty($_POST)) {
     </div>
     <div id="controls">
         <a id="reboot">REBOOT</a>
-        <a id="terminatekodi">Terminate Kodi</a>
-        <a href="https://rpi4/tv/">TVHeadend</a>
+        <a href="https://rpi4/tv/">TVHeadend[1]</a>
+        <a href="https://192.168.1.200/tv/">TVHeadend[2]</a>
         <script type="text/javascript">
             $( "#controls" ).find("a[id]").on( "click", function() {
 
