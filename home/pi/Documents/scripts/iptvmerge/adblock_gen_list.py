@@ -118,7 +118,11 @@ if __name__ == '__main__':
     adblocklist = asyncio.run(main_gather())
     adblocklist = "\n".join(adblocklist)
     adblockcontent = """
+host-record=dialer,192.168.1.1
+host-record=1frouter,192.168.1.30
+host-record=2frouter,192.168.1.15
 host-record=rpi4,192.168.1.200
+host-record=openwrt,192.168.1.10
 host-record=k8svm01,192.168.1.220
 host-record=k8svm02,192.168.1.103
 
