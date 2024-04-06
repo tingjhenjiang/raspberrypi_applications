@@ -7,6 +7,8 @@ header('Access-Control-Allow-Origin: https://rpi4');
 header('Access-Control-Allow-Origin: http://rpi4');
 header('Access-Control-Allow-Origin: https://localhost');
 header('Access-Control-Allow-Origin: http://localhost');
+header('Access-Control-Allow-Origin: https://192.168.1.200');
+header('Access-Control-Allow-Origin: http://192.168.1.200');
 header('Access-Control-Allow-Credentials: true');
 header('Access-Control-Max-Age: 86400');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
@@ -63,7 +65,7 @@ if (!empty($_POST)) {
     header('Content-Type: application/json; charset=utf-8');
     $_POST = json_decode($_POST, true);
     if (array_key_exists('jsonrpc',$_POST) AND array_key_exists('method',$_POST)) {
-        $jsondata = get_remote_json_with_args("https://rpi4:8080/jsonrpc",$_POST,getallheaders());
+        $jsondata = get_remote_json_with_args("http://rpi4:8080/jsonrpc",$_POST,getallheaders());
         echo( $jsondata);
     }
     if (array_key_exists('getcleanersjson',$_POST)) {
@@ -140,9 +142,10 @@ if (!empty($_POST)) {
                 } else {
                     sendpayload = JSON.stringify({"jsonrpc": "2.0", "method": sendMethod, "id":1, "params":{}});
                 }
+                req_kodi_jsonrpc_url = (window.location.host=="192.168.1.200") ? "https://192.168.1.200/cleaner.php" : "https://rpi4/kodijsonrpc"
                 $.ajax({
                     type: 'POST',
-                    url: 'https://rpi4/kodijsonrpc', // Replace with your server endpoint
+                    url: req_kodi_jsonrpc_url, // Replace with your server endpoint
                     data: sendpayload, // Your JSON payload //
                     headers: {
                         "Access-Control-Allow-Origin": "*",
