@@ -137,12 +137,12 @@ if (!empty($_POST)) {
                             "file": "plugin://plugin.video.hamivideo/play/direct/"+encodeURIComponent(otherparam[0])
                         }
                     } });
-                }else {
+                } else {
                     sendpayload = JSON.stringify({"jsonrpc": "2.0", "method": sendMethod, "id":1, "params":{}});
                 }
                 $.ajax({
                     type: 'POST',
-                    url: './cleaner.php', // Replace with your server endpoint
+                    url: 'https://rpi4/kodijsonrpc', // Replace with your server endpoint
                     data: sendpayload, // Your JSON payload //
                     headers: {
                         "Access-Control-Allow-Origin": "*",
