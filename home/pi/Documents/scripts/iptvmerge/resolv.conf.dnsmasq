@@ -1,0 +1,6 @@
+nameserver 168.95.1.1
+nameserver 168.95.192.1
+nameserver 8.8.8.8
+nameserver 4.4.4.4
+nameserver 2001:b000:168::1
+nameserver 2001:b000:168::2

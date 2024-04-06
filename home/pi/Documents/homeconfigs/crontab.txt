@@ -1,0 +1,30 @@
+# Edit this file to introduce tasks to be run by cron.
+# 
+# Each task to run has to be defined through a single line
+# indicating with different fields when the task will be run
+# and what command to run for the task
+# 
+# To define the time you can provide concrete values for
+# minute (m), hour (h), day of month (dom), month (mon),
+# and day of week (dow) or use '*' in these fields (for 'any').
+# 
+# Notice that tasks will be started based on the cron's system
+# daemon's notion of time and timezones.
+# 
+# Output of the crontab jobs (including errors) is sent through
+# email to the user the crontab file belongs to (unless redirected).
+# 
+# For example, you can run a backup of all your user accounts
+# at 5 a.m every week with:
+# 0 5 * * 1 tar -zcf /var/backups/home.tgz /home/
+# 
+# For more information see the manual pages of crontab(5) and cron(8)
+# 
+# m h  dom mon dow   command
+
+*/1 * * * * mount -a
+0 3 * * * bash /home/tj/Documents/scripts/iptvmerge/xmltv_to_socket.sh
+*/2 * * * * /home/tj/Documents/Envs/kodi/bin/python /home/tj/Documents/scripts/mediaRelatedSettings/checkMountReboot.py
+30 */3 * * * /home/tj/Documents/Envs/kodi/bin/python /home/tj/raspberrypi_applications/home/pi/Documents/scripts/iptvmerge/adblock_gen_list.py && systemctl restart dnsmasq.service
+@reboot /home/tj/Documents/Envs/kodi/bin/python /home/tj/Documents/scripts/monitor_control_rpi.py
+0 3 * * * crontab -l > /home/tj/Documents/homeconfigs/crontab.txt

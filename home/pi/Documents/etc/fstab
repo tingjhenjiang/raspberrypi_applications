@@ -1,8 +1,6 @@
-# a swapfile is not a swap partition, no line here
-#   use  dphys-swapfile swap[on|off]  for that
 
 proc            /proc           proc    defaults          0       0
-PARTUUID=4aa22586-01  /boot           vfat    defaults          0       2
-PARTUUID=4aa22586-02  /               ext4    defaults,noatime  0       1
+PARTUUID=4455d0b1-01  /boot/firmware  vfat    defaults          0       2
+PARTUUID=4455d0b1-02  /               ext4    defaults,noatime  0       1
 //192.168.1.30/G        /media/pi/603C27FC115D1BD8      cifs    credentials=/home/tj/Documents/cert/.sambdacred,vers=2.0,x-systemd.automount,x-systemd.mount-timeout=30,nofail,_netdev,iocharset=utf8,file_mode=0777,dir_mode=0777     0       0
 #UUID=66358a26-86bf-4447-b633-c3552f9a10b8       /media/pi/66358a26-86bf-4447-b633-c3552f9a10b8  ext4    defaults,nofail,noatime      0       0

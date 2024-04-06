@@ -5,7 +5,7 @@
 	"language_ui": "eng_US",
 	"theme_ui": "blue",
 	"ui_quicktips": true,
-	"uilevel": 0,
+	"uilevel": 2,
 	"uilevel_nochange": false,
 	"caclient_ui": false,
 	"info_area": [
@@ -18,9 +18,7 @@
 	"date_mask": "",
 	"label_formatting": false,
 	"language": [
-		"chi",
-		"eng_US",
-		"chi_CN"
+		"chi"
 	],
 	"epg_compress": true,
 	"epg_cutwindow": 300,
@@ -39,10 +37,11 @@
 	"local_ip": "",
 	"local_port": 0,
 	"http_user_agent": "TVHeadend/4.3-2155~gfe4df311d",
-	"iptv_tpool": 2,
+	"iptv_tpool": 4,
 	"dscp": -1,
 	"descrambler_buffer": 9000,
 	"parser_backlog": false,
+	"muxconfpath": "/usr/share.dvb",
 	"hbbtv": false,
 	"tvhtime_update_enabled": false,
 	"tvhtime_ntp_enabled": false,
