@@ -115,38 +115,46 @@ if (!empty($_POST)) {
         <table>
             <caption>Kodi Pad User <input id="kodi_auth_user" size="5" type="user" /> PW <input id="kodi_auth_pass" size="5" type="password" /> Stream URL <input id="kodi_input_text" size="15" type="text" /></caption>
             <tr>
-                <td class="singlechar" id="Application.Quit">Q</td><td class="singlechar" id="System.Reboot">RB</td><td class="multiplechar"><a id="Input.ButtonEvent">BEvent</td><td></td>
+                <td class="singlechar" id="Player.PlayPause">&#x23f8;</td><td class="singlechar" id="PVR.Record">&#x23fa;</td><td class="singlechar" id="Application.Quit">Q</td><td class="singlechar" id="System.Reboot">RB</td>
             </tr>
             <tr>
-                <td class="singlechar" id="Player.Stop"> &#x20e0; </td><td class="multiplechar"><a id="Input.ContextMenu">ContxM</td><td class="singlechar" id="Input.Up">↑</td><td class="singlechar" id="Input.SendText">T</td>
+                <td class="singlechar" id="Player.Stop">&#x20e0;</td><td class="multiplechar" id="Input.ContextMenu">ContxM</td><td class="singlechar" id="Input.Up">&#x23eb;</td><td class="singlechar" id="Input.SendText">T</td>
             </tr>
             <tr>
-                <td class="singlechar" id="Input.YT">YT</td><td class="singlechar" id="Input.Left">←</td><td class="singlechar" id="Input.Select">█</td><td class="singlechar" id="Input.Right">→</td>
+                <td class="singlechar" id="Input.YT">YT</td><td class="singlechar" id="Input.Left">&#x23ea;</td><td class="singlechar" id="Input.Select">█</td><td class="singlechar" id="Input.Right">&#x23e9;</td>
             </tr>
             <tr>
-                <td class="singlechar" id="Input.ShowOSD">O</td><td class="singlechar" id="Input.Back">↙</td><td class="singlechar" id="Input.Down">↓</td><td class="singlechar" id="Input.Info">Ⅰ</td>
+                <td class="singlechar" id="Input.ShowOSD">O</td><td class="singlechar" id="Input.Back">↙</td><td class="singlechar" id="Input.Down">&#x23ec;</td><td class="singlechar" id="Input.Info">Ⅰ</td>
             </tr>
         </table>
         <script type="text/javascript">
             var timeoutKodiId = 0;
             var mousedownLoopBreak = true;
             function sendreqtokodi(sendMethod="",otherparam=NULL) {
-                if (sendMethod=="Input.SendText") {
-                    sendpayload = JSON.stringify({"jsonrpc": "2.0", "method": sendMethod, "id":1, "params":[otherparam[0], true] });
-                } else if (sendMethod=="Input.YT") {
-                    sendpayload = JSON.stringify({"jsonrpc": "2.0", "method": "Player.Open", "id":1, "params":{
-                        "item": {
-                            "file": "plugin://plugin.video.hamivideo/play/direct/"+encodeURIComponent(otherparam[0])
-                        }
-                    } });
-                } else {
-                    sendpayload = JSON.stringify({"jsonrpc": "2.0", "method": sendMethod, "id":1, "params":{}});
+                switch (sendMethod) {
+                    case "Input.SendText":
+                        payloadToSend = JSON.stringify({"jsonrpc": "2.0", "method": sendMethod, "id":1, "params":[otherparam[0], true] });
+                        break;
+                    case "Input.YT":
+                        payloadToSend = JSON.stringify({"jsonrpc": "2.0", "method": "Player.Open", "id":1, "params":{
+                            "item": {
+                                "file": "plugin://plugin.video.hamivideo/play/direct/"+encodeURIComponent(otherparam[0])
+                            }
+                        }});
+                        break;
+                    case "Player.Stop":
+                    case "Player.PlayPause":
+                        payloadToSend = JSON.stringify({"jsonrpc": "2.0", "method": "Player.Stop", "id":1, "params":{"playerid": 1}});
+                        break;
+                    default:
+                        payloadToSend = JSON.stringify({"jsonrpc": "2.0", "method": sendMethod, "id":1, "params":{} } );
+                        break;
                 }
                 req_kodi_jsonrpc_url = "/kodijsonrpc"
                 $.ajax({
                     type: 'POST',
                     url: req_kodi_jsonrpc_url, // Replace with your server endpoint
-                    data: sendpayload, // Your JSON payload //
+                    data: payloadToSend, // Your JSON payload //
                     headers: {
                         "Access-Control-Allow-Origin": "*",
                         "Access-Control-Allow-Methods": "DELETE, POST, GET, OPTIONS",
