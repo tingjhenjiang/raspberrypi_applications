@@ -115,16 +115,16 @@ if (!empty($_POST)) {
         <table>
             <caption>Kodi Pad User <input id="kodi_auth_user" size="5" type="user" /> PW <input id="kodi_auth_pass" size="5" type="password" /> Stream URL <input id="kodi_input_text" size="15" type="text" /></caption>
             <tr>
-                <td></td><td class="singlechar"><a id="Application.Quit">Q</a></td><td class="singlechar"><a id="System.Reboot">RB</a></td><td></td>
+                <td class="singlechar" id="Application.Quit">Q</td><td class="singlechar" id="System.Reboot">RB</td><td class="multiplechar"><a id="Input.ButtonEvent">BEvent</td><td></td>
             </tr>
             <tr>
-                <td class="multiplechar"><a id="Input.ButtonEvent">BEvent</a></td><td class="multiplechar"><a id="Input.ContextMenu">ContxM</a></td><td class="singlechar"><a id="Input.Up">↑</a></td><td class="singlechar"><a id="Input.SendText">T</a></td>
+                <td class="singlechar" id="Player.Stop"> &#x20e0; </td><td class="multiplechar"><a id="Input.ContextMenu">ContxM</td><td class="singlechar" id="Input.Up">↑</td><td class="singlechar" id="Input.SendText">T</td>
             </tr>
             <tr>
-                <td class="singlechar"><a id="Input.YT">YT</a></td><td class="singlechar"><a id="Input.Left">←</a></td><td class="singlechar"><a id="Input.Select">█</a></td><td class="singlechar"><a id="Input.Right">→</a></td>
+                <td class="singlechar" id="Input.YT">YT</td><td class="singlechar" id="Input.Left">←</td><td class="singlechar" id="Input.Select">█</td><td class="singlechar" id="Input.Right">→</td>
             </tr>
             <tr>
-                <td class="singlechar"><a id="Input.ShowOSD">O</a></td><td class="singlechar"><a id="Input.Back">↙</a></td><td class="singlechar"><a id="Input.Down">↓</a></td><td class="singlechar"><a id="Input.Info">Ⅰ</a></td>
+                <td class="singlechar" id="Input.ShowOSD">O</td><td class="singlechar" id="Input.Back">↙</td><td class="singlechar" id="Input.Down">↓</td><td class="singlechar" id="Input.Info">Ⅰ</td>
             </tr>
         </table>
         <script type="text/javascript">
@@ -142,7 +142,7 @@ if (!empty($_POST)) {
                 } else {
                     sendpayload = JSON.stringify({"jsonrpc": "2.0", "method": sendMethod, "id":1, "params":{}});
                 }
-                req_kodi_jsonrpc_url = (window.location.host=="192.168.1.200") ? "https://192.168.1.200/cleaner.php" : "https://rpi4/kodijsonrpc"
+                req_kodi_jsonrpc_url = "/kodijsonrpc"
                 $.ajax({
                     type: 'POST',
                     url: req_kodi_jsonrpc_url, // Replace with your server endpoint
@@ -164,17 +164,20 @@ if (!empty($_POST)) {
                     }
                 })
             }
-            $( "#pad" ).find("a[id]").filter( function() {
-                return this.id.match(/^((?!(Up|Left|Right|Down)).)*$/);;
-            }).on("mousedown touchstart", function(event) {
+            function createFilterArrowsFunction(index, element, inverse=false) {
+                filter_res = element.id.match(/(Up|Left|Right|Down)/);
+                filter_res = (inverse) ? filter_res===null : !(filter_res===null);
+                // /^((?!(Up|Left|Right|Down)).)*$/
+                return filter_res;
+            }
+            $( "#pad" ).find("td[id]").filter( function(index,element) {return createFilterArrowsFunction(index,element,true);} ).on("touchstart mousedown", function(event) {
+                event.preventDefault();
                 sendreqtokodi(this.id,  [$("#kodi_input_text").val()]  );
                 $(this).addClass('active');
-            }).bind('mouseup mouseleave touchend mouseleave onmouseout', function(event) {
+            }).bind('touchend mouseup mouseleave mouseleave onmouseout', function(event) {
                 $(this).removeClass('active');
             });
-            $( "#pad" ).find("a[id]").filter( function() {
-                return this.id.match(/(Up|Left|Right|Down)/);;
-            }).on( "mousedown touchstart", function(event) {
+            $( "#pad" ).find("td[id]").filter( function(index,element) {return createFilterArrowsFunction(index,element,false);} ).on( "mousedown touchstart", function(event) {
                 mousedownLoopBreak = false;
                 $(this).addClass('active');
                 for (var i = 0; i < 1001; i++) {
