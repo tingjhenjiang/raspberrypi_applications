@@ -11,11 +11,30 @@
 import requests
 import asyncio
 import time
+import datetime
 from functools import reduce
 from multiprocessing.dummy import Pool as ThreadPool
 import re,os,json
 from pathlib import Path
 
+# %%
+now_datetime = datetime.datetime.now()
+filter_youtube_rule = """
+server=/m.youtube.com/127.0.0.1
+address=/m.youtube.com/127.0.0.1
+address=/m.youtube.com/::1
+"""
+is_moday_block = (now_datetime.weekday()==0 and 
+    ((now_datetime.hour==18 and now_datetime.minute>=35) or now_datetime.hour>=19 )
+    and now_datetime.hour<=21
+)
+is_wedsday_block = (
+    now_datetime.weekday()==2 and now_datetime.hour==18 and now_datetime.hour<=55
+)
+filter_youtube_rule = filter_youtube_rule if is_moday_block or is_wedsday_block else ""
+is_run = True if is_moday_block or is_wedsday_block or (now_datetime.minute in [44,45,46] and now_datetime.hour==4) else False
+if not is_run:
+    os._exit(0)
 # %%
 # print(
 #     re.search(r"(?:0\.0\.0\.0|127\.0\.0\.1|127\.0\.0\.0|::1)*[\s\t]*([^\s#:]+)*","0.0.0.0 c.bigmir.net #[WebBug]").groups()
@@ -27,7 +46,7 @@ from pathlib import Path
 threads = os.cpu_count()
 adblock_srcs = [
     "https://raw.githubusercontent.com/AdguardTeam/cname-trackers/master/data/combined_disguised_trackers_justdomains.txt",
-    "https://cdn.jsdelivr.net/gh/kboghdady/youTube_ads_4_pi-hole/black.list",
+    # "https://cdn.jsdelivr.net/gh/kboghdady/youTube_ads_4_pi-hole/black.list",
     "https://raw.githubusercontent.com/AdguardTeam/cname-trackers/master/data/combined_disguised_clickthroughs_justdomains.txt",
     "https://raw.githubusercontent.com/AdguardTeam/cname-trackers/master/data/combined_disguised_ads_justdomains.txt",
     "https://raw.githubusercontent.com/AdguardTeam/cname-trackers/master/data/combined_disguised_microsites_justdomains.txt",
@@ -40,7 +59,7 @@ adblock_srcs = [
     # second column
     "https://malware-filter.gitlab.io/malware-filter/urlhaus-filter-domains.txt",
     "https://raw.githubusercontent.com/ewpratten/youtube_ad_blocklist/master/blocklist.txt",
-    "https://www.kalfaoglu.net/you/my-youtube-ads-list.txt",
+    # "https://www.kalfaoglu.net/you/my-youtube-ads-list.txt",
     "https://pgl.yoyo.org/adservers/serverlist.php?hostformat=dnsmasq",
     "https://raw.githubusercontent.com/easylist/easylist/master/easylist/easylist_adservers.txt",
     "https://raw.githubusercontent.com/Spam404/lists/master/adblock-list.txt",
@@ -105,6 +124,8 @@ async def main_gather():
     x = reduce(merge_dict, x, {})
     returnset = set()
     for k,v in x.items():
+        if re.search("googlevideo.com",v) is not None:
+            print(f"found googlevideo.com in {k}")
         returnset = returnset.union(set(
             txt_to_hostlist(v, srcurl=k)
             ))
@@ -118,6 +139,14 @@ if __name__ == '__main__':
     adblocklist = asyncio.run(main_gather())
     adblocklist = "\n".join(adblocklist)
     adblockcontent = """
+server=168.95.192.1
+server=168.95.1.1
+server=2001:b000:168::1
+server=2001:b000:168::2
+server=8.8.8.8
+server=4.4.4.4
+server=2001:4860:4860::8888
+server=2001:4860:4860::8844
 host-record=dialer,192.168.1.1
 host-record=1frouter,192.168.1.30
 host-record=2frouter,192.168.1.15
@@ -125,6 +154,7 @@ host-record=rpi4,192.168.1.200
 host-record=openwrt,192.168.1.10
 host-record=k8svm01,192.168.1.220
 host-record=k8svm02,192.168.1.103
+
 
 domain-needed
 bogus-priv
@@ -140,7 +170,7 @@ interface=lo
 local=/lan/
 domain=lan
     """
-    adblockcontent = f"{adblocklist}\n{adblockcontent.strip()}"
+    adblockcontent = f"{adblocklist}\n{adblockcontent.strip()}\n{filter_youtube_rule}".strip()
     script_dir = Path( __file__ ).parent
     conf_path = script_dir/"adblock_local_list.conf"
     conf_path.write_text(adblockcontent)
