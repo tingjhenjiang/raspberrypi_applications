@@ -117,7 +117,7 @@ if (!empty($_POST)) {
     <div id="map"></div>
     <div id="pad">
         <table>
-            <caption>Kodi Pad User <input id="kodi_auth_user" size="5" type="user" value="kodi" /> PW <input id="kodi_auth_pass" size="5" type="password" value="" /> Stream URL <textarea id="kodi_input_text" size="15" type="text"></textarea></caption>
+            <caption>Kodi Pad User <input id="kodi_auth_user" size="5" type="user" value="kodi" /> PW <input id="kodi_auth_pass" size="5" type="password" value="" /> <br />Stream URL <br /><textarea id="kodi_input_text" size="15" type="text"></textarea><input type="button" id="to_clear_kodi_input_text" value="clear" /></caption>
             <tr>
                 <td class="singlechar" id="Player.PlayPause">&#x23f8;</td><td class="singlechar" id="Input.SendText">T</td><td class="singlechar" id="Application.Quit">Q</td><td class="multiplechar" id="Playlist.Insert">Insert</td>
             </tr>
@@ -140,6 +140,9 @@ if (!empty($_POST)) {
         <script type="text/javascript">
             var timeoutKodiId = 0;
             var mousedownLoopBreak = true;
+            document.getElementById("to_clear_kodi_input_text").addEventListener("click", function() {
+                document.getElementById("kodi_input_text").value = "";
+            });
             async function sendreqtokodi(sendMethod="",otherparam=null) {
                 switch (sendMethod) {
                     case "Input.SendText":
