@@ -14,7 +14,7 @@ header('Access-Control-Allow-Credentials: true');
 header('Access-Control-Max-Age: 86400');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: X-Requested-With, Content-Type, Accept');
-// etherwake -b -i 'eth1' -D 10:7B:44:7A:31:B2
+
 function get_remote_json_with_args($url,$payload=NULL,$headers=NULL) {
     $this_header = array(
         "Referer: https://cleaner.epb.taichung.gov.tw/",
@@ -85,24 +85,43 @@ if (!empty($_POST)) {
         echo $content;
     }
     if (array_key_exists('controlrpi',$_POST)) {
-        file_put_contents('controlrpi.txt', $_POST['controlrpi']);
-        echo '{"complete":"TRUE"}';
+        $control_rpi_file = "controlrpi.txt";
+        $identity = array();
+        exec('whoami', $identity);
+        $control_rpi_file_exist = file_exists($control_rpi_file);
+        if (   in_array($_POST['controlrpi'], array('reboot','wakeup2f','wakeuptjlaptop'))   ) {
+            $renameresult = rename($control_rpi_file,'controlrpi_'.$_POST['controlrpi'].'.txt');
+        }
+        $return_array = array(
+            "complete" => TRUE,
+            "getvalue" => $_POST['controlrpi'],
+            "file_exists" => $control_rpi_file_exist,
+            "renameresult" => $renameresult,
+            "identity" => $identity
+        );
+        echo json_encode($return_array);
     }
     // echo '{"test":"TRUE"}';
 } else {
 ?><html>
 <head>
-    <meta meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js" integrity="sha512-BwHfrr4c9kmRkLw6iXFdzcdWV/PGkVgiIyIWLLlTSXzWQzxuSg4DiQUCpauz/EWjgk5TYQqX/kvn9pG1NpYfqg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
-        #map { height: 550px; clear:both; }
+        #map { height: 80%; clear:both; }
         #controls a { text-decoration: underline; cursor: pointer; padding-right:10px; }
         #pad { float: right; }
         #pad table { overflow-x:auto; }
         #pad td.singlechar, span.singlechar { font-size: 50px; text-align:center; font-weight: bold; padding:5px; }
         #pad td.multiplechar, span.multiplechar { font-size: 15px; text-align:center; font-weight: bold; padding:5px; }
+        .singlechar, .multiplechar {
+            user-select: none; /* Standard CSS */
+            -webkit-user-select: none; /* Safari and Chrome */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* Internet Explorer */
+        }
         .active { color:red; }
     </style>
     <script type="text/javascript">
@@ -117,33 +136,56 @@ if (!empty($_POST)) {
     <div id="map"></div>
     <div id="pad">
         <table>
-            <caption>Kodi Pad User <input id="kodi_auth_user" size="5" type="user" value="kodi" /> PW <input id="kodi_auth_pass" size="5" type="password" value="" /> <br />Stream URL <br /><textarea id="kodi_input_text" size="15" type="text"></textarea><input type="button" id="to_clear_kodi_input_text" value="clear" /></caption>
-            <tr>
-                <td class="singlechar" id="Player.PlayPause">&#x23f8;</td><td class="singlechar" id="Input.SendText">T</td><td class="singlechar" id="Application.Quit">Q</td><td class="multiplechar" id="Playlist.Insert">Insert</td>
-            </tr>
-            <tr>
-                <td class="singlechar" id="Player.Stop">&#x20e0;</td><td class="singlechar" id="Player.GoToPrevious">&#x23EE;</td><td class="singlechar" id="Input.Up">&#x23eb;</td><td class="singlechar" id="Player.GoToNext">&#x23ED;</td>
-            </tr>
-            <tr>
-                <td class="singlechar" id="Player.Open.Stream">&#x1F4C2;</td><td class="singlechar" id="Input.Left">&#x23ea;</td><td class="singlechar" id="Input.Select">&#9608;</td><td class="singlechar" id="Input.Right">&#x23e9;</td>
-            </tr>
-            <tr>
-                <td class="singlechar" id="Input.ShowOSD">O</td><td class="singlechar" id="Input.Back">↙</td><td class="singlechar" id="Input.Down">&#x23ec;</td><td class="singlechar" id="Input.Info">Ⅰ</td>
-            </tr>
-            <tr>
-                <td class="multiplechar" id="Input.ContextMenu">ContxM</td><td class="singlechar" id="Player.SeekBackward"><span class="multiplechar">BWD</span><br />◃</td><td class="singlechar" id="PVR.Record">&#9673;</td><td class="singlechar" id="Player.SeekForward"><span class="multiplechar">FWD</span><br />▹</td>
-            </tr>
-            <tr>
-                <td class="singlechar" id="System.Reboot">RB</td><td class="multiplechar"></td><td class="singlechar" id="Player.SetSubtitle.On">&#x1F50B;<br /><span class="multiplechar">subtitle</span></td><td class="singlechar" id="Player.SetSubtitle.Off">&#x1F50C;<br /><span class="multiplechar">subtitle</span></td>
-            </tr>
+            <caption>Kodi Pad User <input id="kodi_auth_user" size="5" type="user" value="kodi" /> PW <input id="kodi_auth_pass" size="5" type="password" value="" /> <br />Stream URL <br /><textarea id="kodi_input_text" size="15" type="text"></textarea><br /><input type="button" id="to_clear_and_paste_kodi_input_text" value="clear and paste" /><input type="button" id="to_clear_kodi_input_text" value="clear" /></caption>
+            <div id="pad_noncaption">
+                <tr>
+                    <td class="singlechar" id="Player.PlayPause">&#x23f8;</td><td class="singlechar" id="Input.SendText">T</td><td class="singlechar" id="Application.Quit">Q</td><td class="multiplechar" id="Playlist.Insert">Insert</td>
+                </tr>
+                <tr>
+                    <td class="singlechar" id="Player.Stop">&#x20e0;</td><td class="singlechar" id="Player.GoToPrevious">&#x23EE;</td><td class="singlechar" id="Input.Up">&#x23eb;</td><td class="singlechar" id="Player.GoToNext">&#x23ED;</td>
+                </tr>
+                <tr>
+                    <td class="singlechar" id="Player.Open.Stream">&#x1F4C2;</td><td class="singlechar" id="Input.Left">&#x23ea;</td><td class="singlechar" id="Input.Select">&#9608;</td><td class="singlechar" id="Input.Right">&#x23e9;</td>
+                </tr>
+                <tr>
+                    <td class="singlechar" id="Input.ShowOSD">O</td><td class="singlechar" id="Input.Back">↙</td><td class="singlechar" id="Input.Down">&#x23ec;</td><td class="singlechar" id="Input.Info">Ⅰ</td>
+                </tr>
+                <tr>
+                    <td class="multiplechar" id="Input.ContextMenu">ContxM</td><td class="singlechar" id="Player.SeekBackward"><span class="multiplechar">BWD</span><br />◃</td><td class="singlechar" id="PVR.Record">&#9673;</td><td class="singlechar" id="Player.SeekForward"><span class="multiplechar">FWD</span><br />▹</td>
+                </tr>
+                <tr>
+                    <td class="singlechar" id="System.Reboot">RB</td><td class="multiplechar"></td><td class="singlechar" id="Player.SetSubtitle.On">&#x1F50B;<br /><span class="multiplechar">subtitle</span></td><td class="singlechar" id="Player.SetSubtitle.Off">&#x1F50C;<br /><span class="multiplechar">subtitle</span></td>
+                </tr>
+            </div>
         </table>
         <script type="text/javascript">
             var timeoutKodiId = 0;
             var mousedownLoopBreak = true;
-            document.getElementById("to_clear_kodi_input_text").addEventListener("click", function() {
-                document.getElementById("kodi_input_text").value = "";
+            $(document).ready(function() {
+                $('#pad_noncaption td.singlechar, #pad_noncaption td.multiplechar').on('mousedown touchstart contextmenu', function (event) {
+                    // Prevent the default context menu
+                    event.preventDefault();
+                });
+                $('#to_clear_kodi_input_text').on('click', async function() {
+                    $('#kodi_input_text').val(''); // Clear the textarea
+                });
+                $('#to_clear_and_paste_kodi_input_text').on('click', async function() {
+                    $('#kodi_input_text').val(''); // Clear the textarea
+                    try {
+                        const clipboardText = await navigator.clipboard.readText();
+                        $('#kodi_input_text').val(clipboardText); // Set the textarea to the clipboard content if available
+                    } catch (err) {
+                        alert('Failed to read clipboard contents: ', err);
+                        try {
+                            var clipboardText = window.clipboardData.getData('Text');
+                            $('#kodi_input_text').val(clipboardText);
+                        } catch (err2) {
+                            alert('Failed to read clipboard contents with window.clipboardData: ', err2);
+                        }
+                    }
+                });
             });
-            async function sendreqtokodi(sendMethod="",otherparam=null) {
+            async function sendreqtokodi(sendMethod="", otherparam=null) {
                 switch (sendMethod) {
                     case "Input.SendText":
                         payloadToSend = JSON.stringify({"jsonrpc": "2.0", "method": sendMethod, "id":1, "params":[otherparam[0], true] });
@@ -275,6 +317,8 @@ if (!empty($_POST)) {
     </div>
     <div id="controls">
         <a id="reboot">REBOOT</a>
+        <a id="wakeup2f">Wakeup 2FPC</a>
+        <a id="wakeuptjlaptop">Wakeup TJ Laptop</a>
         <a href="https://rpi4/tv/">TVHeadend[1]</a>
         <a href="https://192.168.1.200/tv/">TVHeadend[2]</a>
         <script type="text/javascript">

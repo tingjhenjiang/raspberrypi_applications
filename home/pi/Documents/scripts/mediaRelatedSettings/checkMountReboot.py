@@ -9,6 +9,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import TimeoutException
 # %%
 checkDirectory = "/media/pi/603C27FC115D1BD8/Videos"
+checkDirectory = "/home/tj/Videos"
 try:
     drive_mounted = os.path.isdir(checkDirectory)
 except:

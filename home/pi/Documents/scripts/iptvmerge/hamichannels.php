@@ -32,7 +32,7 @@ EOM;
         $this->get_channel_details();
     }
     function get_hamichs_html() {
-        $hamichshtml = getSslPage($this->hamihost."/%E9%9B%BB%E8%A6%96%E9%A4%A8/%E5%85%A8%E9%83%A8.do");
+        $hamichshtml = getSslPage($this->hamihost."/%E9%9B%BB%E8%A6%96%E9%81%8B%E5%8B%95%E9%A4%A8/%E5%85%A8%E9%83%A8.do");
         $this->hamichshtml = $hamichshtml;
     }
     function get_hamichs_htmlelements() {

@@ -23,8 +23,8 @@
 # m h  dom mon dow   command
 
 */1 * * * * mount -a
-0 3 * * * bash /home/tj/Documents/scripts/iptvmerge/xmltv_to_socket.sh
-*/2 * * * * /home/tj/Documents/Envs/kodi/bin/python /home/tj/Documents/scripts/mediaRelatedSettings/checkMountReboot.py
-30 */3 * * * /home/tj/Documents/Envs/kodi/bin/python /home/tj/raspberrypi_applications/home/pi/Documents/scripts/iptvmerge/adblock_gen_list.py && systemctl restart dnsmasq.service
+45 19 * * * bash /home/tj/Documents/scripts/iptvmerge/xmltv_to_socket.sh
+*/1 * * * * /home/tj/Documents/Envs/kodi/bin/python /home/tj/Documents/scripts/mediaRelatedSettings/checkMountReboot.py
+0,15,30,45 * * * * /home/tj/Documents/Envs/kodi/bin/python /home/tj/raspberrypi_applications/home/pi/Documents/scripts/iptvmerge/adblock_gen_list.py && systemctl restart dnsmasq.service
 @reboot /home/tj/Documents/Envs/kodi/bin/python /home/tj/Documents/scripts/monitor_control_rpi.py
 0 3 * * * crontab -l > /home/tj/Documents/homeconfigs/crontab.txt

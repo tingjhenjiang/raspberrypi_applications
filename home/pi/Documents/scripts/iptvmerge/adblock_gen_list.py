@@ -24,15 +24,17 @@ server=/m.youtube.com/127.0.0.1
 address=/m.youtube.com/127.0.0.1
 address=/m.youtube.com/::1
 """
-is_moday_block = (now_datetime.weekday()==0 and 
-    ((now_datetime.hour==18 and now_datetime.minute>=35) or now_datetime.hour>=19 )
+is_monday_block = (now_datetime.weekday() in [0,1,2,3,4,5] and 
+    ((now_datetime.hour==18 and now_datetime.minute>=20) or (now_datetime.hour==19 and now_datetime.minute<=45) or (now_datetime.hour>=12) )
     and now_datetime.hour<=21
 )
 is_wedsday_block = (
-    now_datetime.weekday()==2 and now_datetime.hour==18 and now_datetime.hour<=55
+    now_datetime.weekday() in [0,1,2,3,4,5] and 
+    ((now_datetime.hour>=17 and now_datetime.minute>=30) or (now_datetime.hour==18 and now_datetime.minute<=45))
+    and now_datetime.hour<=19
 )
-filter_youtube_rule = filter_youtube_rule if is_moday_block or is_wedsday_block else ""
-is_run = True if is_moday_block or is_wedsday_block or (now_datetime.minute in [44,45,46] and now_datetime.hour==4) else False
+filter_youtube_rule = filter_youtube_rule if is_monday_block or is_wedsday_block else ""
+is_run = True if is_monday_block or is_wedsday_block or (now_datetime.minute in [45] and now_datetime.hour==4) else False
 if not is_run:
     os._exit(0)
 # %%
